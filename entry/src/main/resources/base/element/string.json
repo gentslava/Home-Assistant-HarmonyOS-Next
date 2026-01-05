@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "Приложение для управления Home Assistant на часах Huawei через связку с телефоном."
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Главный экран управления устройствами Home Assistant."
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "Home Assistant"
+    }
+  ]
+}

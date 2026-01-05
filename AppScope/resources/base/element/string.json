@@ -1,0 +1,12 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "Home Assistant"
+    },
+    {
+      "name": "app_desc",
+      "value": "Клиент Home Assistant для часов Huawei (управление устройствами через телефон)."
+    }
+  ]
+}
