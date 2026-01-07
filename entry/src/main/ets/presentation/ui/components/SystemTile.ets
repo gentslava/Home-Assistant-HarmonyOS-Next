@@ -32,7 +32,7 @@ export struct SystemTile {
         }
       }
       .layoutWeight(1)
-      .margin({ left: 4 });
+      .margin({ left: 4, right: 4 });
 
       if (this.showChevron) {
         Image($r("app.media.chevron_right"))
