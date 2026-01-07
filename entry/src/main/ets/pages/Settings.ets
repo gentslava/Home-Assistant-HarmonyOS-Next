@@ -1,3 +1,4 @@
+import router from '@ohos.router';
 import { AppStorageV2 } from '@ohos.arkui.StateManagement';
 import {
   ArcList, ArcListItem,
@@ -10,6 +11,15 @@ import { HomeAssistantStore } from '../presentation/store/HomeAssistantStore';
 
 import { SystemTile } from '../presentation/ui/components/SystemTile';
 import { HeaderParams, SystemHeaderBuilder } from '../presentation/ui/components/SystemHeader';
+
+
+class RouteOptionAbout implements router.RouterOptions {
+  url: string;
+
+  constructor() {
+    this.url = 'pages/About';
+  }
+}
 
 @Entry
 @ComponentV2
@@ -26,6 +36,11 @@ struct Settings {
       wrapBuilder<[HeaderParams]>(SystemHeaderBuilder),
       p
     );
+  }
+
+  private openAbout(): void {
+    const r = this.getUIContext().getRouter();
+    r.pushUrl(new RouteOptionAbout(), () => {});
   }
 
   build() {
@@ -86,7 +101,8 @@ struct Settings {
           });
         }
         .width('100%')
-        .justifyContent(FlexAlign.Center);
+        .justifyContent(FlexAlign.Center)
+        .onClick(() => this.openAbout());
       }
     }
     .space(LengthMetrics.vp(6))

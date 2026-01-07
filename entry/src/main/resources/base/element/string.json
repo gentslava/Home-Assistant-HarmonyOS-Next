@@ -1,16 +1,49 @@
 {
   "string": [
+    { "name": "app_name", "value": "Home Assistant" },
     {
       "name": "module_desc",
-      "value": "Приложение для управления Home Assistant на часах Huawei через связку с телефоном."
+      "value": "An app for controlling Home Assistant on Huawei watches via a phone connection."
     },
     {
       "name": "EntryAbility_desc",
-      "value": "Главный экран управления устройствами Home Assistant."
+      "value": "The main screen for managing Home Assistant devices."
     },
     {
-      "name": "EntryAbility_label",
-      "value": "Home Assistant"
+      "name": "IndexPage_settings_label",
+      "value": "Settings"
+    },
+    {
+      "name": "IndexPage_settings_description",
+      "value": "App preferences"
+    },
+    { "name": "about_support_text", "value": "For questions and support:" },
+    { "name": "about_contact_line1", "value": "GitHub: gentslava/home-assistant-harmonyos-next" },
+    { "name": "about_contact_line2", "value": "Telegram: @gentslava" },
+    { "name": "about_version_label", "value": "Version:" },
+    {
+      "name": "Entity_light_enable_label",
+      "value": "Turn on"
+    },
+    {
+      "name": "Entity_light_disable_label",
+      "value": "Turn off"
+    },
+    {
+      "name": "Entity_lock_enable_label",
+      "value": "Lock"
+    },
+    {
+      "name": "Entity_lock_disable_label",
+      "value": "Unlock"
+    },
+    {
+      "name": "Entity_switch_enable_label",
+      "value": "Turn on"
+    },
+    {
+      "name": "Entity_switch_disable_label",
+      "value": "Turn off"
     }
   ]
 }
