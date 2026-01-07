@@ -1,0 +1,48 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "Приложение для управления Home Assistant на часах Huawei через связку с телефоном."
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Главный экран управления устройствами Home Assistant."
+    },
+    {
+      "name": "IndexPage_settings_label",
+      "value": "Настройки"
+    },
+    {
+      "name": "IndexPage_settings_description",
+      "value": "Параметры приложения"
+    },
+    { "name": "about_support_text", "value": "По вопросам и поддержке обращайтесь:" },
+    { "name": "about_contact_line1", "value": "GitHub: gentslava/home-assistant-harmonyos-next" },
+    { "name": "about_contact_line2", "value": "Telegram: @gentslava" },
+    { "name": "about_version_label", "value": "Версия:" },
+    {
+      "name": "Entity_light_enable_label",
+      "value": "Вкл."
+    },
+    {
+      "name": "Entity_light_disable_label",
+      "value": "Выкл."
+    },
+    {
+      "name": "Entity_lock_enable_label",
+      "value": "Закрыть"
+    },
+    {
+      "name": "Entity_lock_disable_label",
+      "value": "Открыть"
+    },
+    {
+      "name": "Entity_switch_enable_label",
+      "value": "Вкл."
+    },
+    {
+      "name": "Entity_switch_disable_label",
+      "value": "Выкл."
+    }
+  ]
+}

@@ -59,9 +59,9 @@ struct EntityDetails {
     return entity ? entity.state : '-';
   }
 
-  private primaryLabel(): string {
+  private primaryLabel(): string | Resource {
     const entity: EntityCard | undefined = this.getCard();
-    return entity ? entity.primary.label : '-';
+    return entity ? $r(entity.primary.label) : '-';
   }
 
   private secondaryActions(): EntityAction[] {

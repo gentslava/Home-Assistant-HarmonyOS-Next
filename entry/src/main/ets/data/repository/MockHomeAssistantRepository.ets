@@ -92,7 +92,7 @@ export class MockHomeAssistantRepository implements HomeAssistantRepository {
     const primary: EntityAction = this.makeServiceAction(
       'light',
       'toggle',
-      state === 'on' ? 'Turn off' : 'Turn on',
+      state === 'on' ? 'app.string.Entity_light_disable_label' : 'app.string.Entity_light_enable_label',
       id
     );
 
@@ -119,7 +119,7 @@ export class MockHomeAssistantRepository implements HomeAssistantRepository {
     const primary: EntityAction = this.makeServiceAction(
       'lock',
       'toggle',
-      state === 'locked' ? 'Unlock' : 'Lock',
+      state === 'locked' ? 'app.string.Entity_lock_disable_label' : 'app.string.Entity_lock_enable_label',
       id
     );
 
@@ -146,7 +146,7 @@ export class MockHomeAssistantRepository implements HomeAssistantRepository {
     const primary: EntityAction = this.makeServiceAction(
       'switch',
       'toggle',
-      state === 'on' ? 'Turn off' : 'Turn on',
+      state === 'on' ? 'app.string.Entity_switch_disable_label' : 'app.string.Entity_switch_enable_label',
       id
     );
 

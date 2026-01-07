@@ -2,8 +2,8 @@ import { IconBadge } from './IconBadge';
 
 @ComponentV2
 export struct SystemTile {
-  @Param title: string = '';
-  @Param subtitle: string = '';
+  @Param title: string | Resource = '';
+  @Param subtitle: string | Resource = '';
   @Param iconText: string = '?';
   @Param iconRes: Resource | undefined = undefined;
   @Param iconBgColor: number = 0xFF1E88FF;
@@ -21,7 +21,7 @@ export struct SystemTile {
           .fontColor(0xFFFFFFFF)
           .textOverflow({ overflow: TextOverflow.Ellipsis });
 
-        if (this.subtitle.length > 0) {
+        if (this.subtitle) {
           Text(this.subtitle)
             .fontSize(13)
             .opacity(0.65)

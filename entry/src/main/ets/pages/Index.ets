@@ -139,8 +139,8 @@ struct Index {
           ArcListItem() {
             Row() {
               SystemTile({
-                title: 'Settings',
-                subtitle: 'App preferences',
+                title: $r('app.string.IndexPage_settings_label'),
+                subtitle: $r('app.string.IndexPage_settings_description'),
                 iconText: '⚙',
                 iconBgColor: 0xFF4A4A4A,
                 showChevron: true
