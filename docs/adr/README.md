@@ -16,6 +16,7 @@ that is fine — but write a new ADR that supersedes it rather than silently div
 | [0004](0004-componentv2-appstoragev2-state.md) | ArkUI V2 state management only (`@ComponentV2`/`AppStorageV2`) | Accepted |
 | [0005](0005-target-full-wearable-not-lite.md) | Target full wearable (Watch 4/5/Ultimate), not lite wearable (GT) | Accepted |
 | [0006](0006-monorepo-structure.md) | Monorepo for the watch apps and companion | Accepted |
+| [0007](0007-per-app-agents-md.md) | Per-app AGENTS.md for the multi-platform monorepo | Accepted |
 
 ## Conventions
 

@@ -6,9 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 @AGENTS.md
 
-Everything operational — what the app is, build/run/test/lint, layout, strict-ArkTS code style,
-and gotchas — lives in `AGENTS.md` above so it is shared with every AI tool. **Read it first.**
-Do not duplicate that content here; this file holds only Claude Code-specific guidance.
+Operational context lives in `AGENTS.md` (a router) and the **per-app `apps/<app>/AGENTS.md`** for
+each platform. **Read the root one, then the per-app one for the app you're touching** — applying
+ArkTS rules to the Kotlin or lite-JS app is the most common mistake here. This file holds only
+Claude-specific guidance.
 
 ## Deep-dive references (load on demand)
 
@@ -24,15 +25,15 @@ Do not duplicate that content here; this file holds only Claude Code-specific gu
   (use plan mode); skip the plan only when the change is describable in one sentence. Details in
   [DEVELOPMENT.md](DEVELOPMENT.md).
 - **Use the role subagents** in `.claude/agents/` rather than doing everything inline:
-  - `arkts-architect` — planning a feature, a layer/contract change, or a new HA domain.
-  - `code-reviewer` — review any non-trivial change in a fresh context before commit.
-  - `test-writer` — add/extend hypium tests under `entry/src/test` or `entry/src/ohosTest` (in `apps/watch-arkts/`).
-- **Verify, don't assume.** A task is done only when the emulator still runs in Mock mode and the
-  linter reports no new ArkTS errors/warnings. State the evidence; don't claim success without it.
-  This repo has no committed `hvigorw`/CI, so verification is mostly via DevEco Studio — if you
-  cannot run a check, say so explicitly instead of asserting it passed.
-- **Scope discipline.** Touch only what the task needs. Don't remove the commented `setRemoteApp`
-  call or the `module.json5` placeholders — they are deliberate (see gotchas in `AGENTS.md`).
+  - `architect` — planning a feature, a protocol/contract change, or a new HA domain across apps.
+  - `code-reviewer` — review any non-trivial change in a fresh context before commit (applies the file's per-app rules).
+  - `test-writer` — add/extend tests with the right framework per app (hypium / JUnit / on-device).
+- **Verify, don't assume.** Verification is per-app (see each `AGENTS.md`): watch-arkts = emulator
+  Mock run + Code Linter; watch-lite = builds/installs on a real GT; companion = `./gradlew test`.
+  State the evidence; if you couldn't run a check, say so instead of asserting it passed.
+- **Scope discipline.** Touch only what the task needs, and don't carry one app's conventions into
+  another. Don't remove deliberate placeholders (`setRemoteApp`, `PEER_FINGERPRINT`, `module.json5`
+  metadata) — see the per-app gotchas.
 - **Surface assumptions and ask** when requirements are ambiguous — the repo author prefers an
   extra question over a wrong inference.
 
