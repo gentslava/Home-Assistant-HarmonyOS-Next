@@ -12,7 +12,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "ru.gentslava.homeassistant.companion"
+        applicationId = "ru.gentslava.homeassistant"
         minSdk = 26
         targetSdk = 35
         versionCode = 1

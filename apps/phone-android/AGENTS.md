@@ -11,7 +11,7 @@ Different stack from the watches (Kotlin, not ArkTS/JS). Open `apps/phone-androi
 | Language / UI | Kotlin, Jetpack Compose (Material3) |
 | Build | Gradle (version catalog `gradle/libs.versions.toml`), AGP 8.7, JDK 17 |
 | SDK | compileSdk 35, minSdk 26, targetSdk 35 |
-| App id | `ru.gentslava.homeassistant.companion` |
+| App id | `applicationId` = `ru.gentslava.homeassistant` (matches AGC + the watch peer); Kotlin namespace stays `…​.companion` |
 | HA | OkHttp + kotlinx-serialization (`Bearer` token) |
 | Storage | EncryptedSharedPreferences (HA URL + token) |
 | Watch transport | HMS **Wear Engine** (`com.huawei.hms:wearengine`) |

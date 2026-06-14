@@ -21,7 +21,7 @@
       "customizeData": [
         {
           "name": "supportLists",
-          "value": "ru.gentslava.homeassistant.companion:PUT_COMPANION_FINGERPRINT_HERE",
+          "value": "ru.gentslava.homeassistant:PUT_COMPANION_FINGERPRINT_HERE",
           "extra": ""
         }
       ]

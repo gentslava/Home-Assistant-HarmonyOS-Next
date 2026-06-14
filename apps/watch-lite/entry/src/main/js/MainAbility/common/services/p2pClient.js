@@ -12,7 +12,7 @@
  */
 import { P2pClient, Message, Builder } from '../wearenginesdk/wearengine.js';
 
-var PHONE_PKG = 'ru.gentslava.homeassistant.companion';
+var PHONE_PKG = 'ru.gentslava.homeassistant';
 var PHONE_FINGERPRINT = 'PUT_COMPANION_FINGERPRINT_HERE';
 var PROTOCOL_VERSION = 1;
 

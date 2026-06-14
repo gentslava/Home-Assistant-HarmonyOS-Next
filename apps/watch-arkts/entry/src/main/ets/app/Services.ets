@@ -31,7 +31,7 @@ export class Services {
 
     // Companion (Android) bundle + signing fingerprint. Fill the fingerprint from AppGallery Connect.
     // Until it's real, hasConnectedPeer()/init() fail and Services falls back to Mock (by design).
-    p2p.setRemoteApp('ru.gentslava.homeassistant.companion', 'PUT_COMPANION_FINGERPRINT_HERE');
+    p2p.setRemoteApp('ru.gentslava.homeassistant', 'PUT_COMPANION_FINGERPRINT_HERE');
 
     await p2p.init();
 
