@@ -15,6 +15,7 @@ that is fine — but write a new ADR that supersedes it rather than silently div
 | [0003](0003-wear-engine-p2p-transport.md) | Wear Engine P2P as the watch↔phone transport | Accepted |
 | [0004](0004-componentv2-appstoragev2-state.md) | ArkUI V2 state management only (`@ComponentV2`/`AppStorageV2`) | Accepted |
 | [0005](0005-target-full-wearable-not-lite.md) | Target full wearable (Watch 4/5/Ultimate), not lite wearable (GT) | Accepted |
+| [0006](0006-monorepo-structure.md) | Monorepo for the watch apps and companion | Accepted |
 
 ## Conventions
 
