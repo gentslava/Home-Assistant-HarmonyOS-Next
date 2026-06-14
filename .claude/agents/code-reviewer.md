@@ -21,8 +21,9 @@ Read the relevant [docs/adr/](../../docs/adr/) before judging — many "issues" 
 - Non-`ArcList` scroll on the round screen; mock path broken; hardcoded strings (need `$r` + ru_RU).
 
 **`apps/watch-lite/` (lite-JS, ES5.1):**
-- 🔴 **ES5.1 violations** — `globalThis`, `Promise`, `async`/`await`, arrow funcs, spread `...`,
-  `?.`/`??`, destructuring from `.split()`. These break on JerryScript — flag as blockers.
+- 🔴 **Unsupported JS** — `globalThis`, `Promise`, `async`/`await`, spread `...arr`, `?.`, `??`.
+  These break on JerryScript — flag as blockers. (Arrow funcs, `let`/`const`, destructuring,
+  template strings ARE supported — don't flag those.)
 - Cross-page state via `globalThis` instead of `getStore()`; large PNG icons (raw-RGBA bloat vs 10 MB);
   `router.push` (no back-stack — use `replace`); list not re-rendered after array mutation.
 

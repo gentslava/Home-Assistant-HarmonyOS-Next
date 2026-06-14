@@ -24,7 +24,7 @@ production code.
 - **No shared code between the two watch apps** — only shared *design* (contract, domain model,
   layering). ArkTS and lite-JS are different languages/runtimes; plan parallel changes, not reuse.
 - **Respect each platform's rules** (from its AGENTS.md): watch-arkts = strict ArkTS / ArkUI V2;
-  watch-lite = **ES5.1 only** (no Promise/globalThis/spread/arrow), callbacks, lite limits (HAP ≤10 MB,
+  watch-lite = **limited JS** (no Promise/globalThis/spread/`?.`/`??`; arrow/let/const/destructuring OK), callbacks, lite limits (HAP ≤10 MB,
   page ≤48 KB, no background); companion = Kotlin coroutines/Result, `HaBridge` stays transport-agnostic.
 - **Keep the mock path working** in each watch app.
 - **No new production deps** in the watch apps without discussion.

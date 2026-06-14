@@ -18,16 +18,17 @@ Open `apps/watch-lite/` as the project root in DevEco Studio.
 | Bundle | `ru.gentslava.homeassistant` |
 | Transport | Wear Engine P2P via bundled `wearengine.js` SDK (callbacks) |
 
-## 🔴 ES5.1 only — JerryScript does not support newer JS
+## 🔴 Limited JS — JerryScript supports a fixed ES6 subset, not modern JS
 
-These **throw or break install** — never use them in this app:
+**Not supported — these throw or break install, never use:**
 
 - ❌ `globalThis` (use `getApp().data` / the `store.js` singleton)
-- ❌ `Promise`, `async`/`await` (use callbacks)
-- ❌ arrow functions `() =>` (use `function () {}`)
-- ❌ spread `...`, optional chaining `?.`, nullish `??`, destructuring from `.split()`
-- ❌ `let`/`const` are tolerated, but match existing `var` style in this app
-- ✅ `var`, `function`, classic callbacks `{ onSuccess, onFailure }`, `JSON.parse/stringify`
+- ❌ `Promise`, `async`/`await` — use callbacks `{ onSuccess, onFailure }`
+- ❌ spread `...arr`, optional chaining `?.`, nullish `??`
+
+**Supported ES6 subset** (verified on device): `let`/`const`, arrow functions, `class`,
+destructuring, template strings, `for-of`, rest params, enhanced object literals. Existing files mix
+`var`/`function` and `const`/arrow — both are fine; match the file you're editing.
 
 Cross-page state goes through `common/store.js` (`getStore()`), never `globalThis`.
 

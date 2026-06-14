@@ -28,7 +28,7 @@ Domains: `light`, `switch`, `lock`. Localization: EN + RU.
 | App | Platform | Per-app rules | One-line |
 |-----|----------|---------------|----------|
 | [`apps/watch-arkts/`](apps/watch-arkts/AGENTS.md) | ArkTS + ArkUI (Stage) | [AGENTS.md](apps/watch-arkts/AGENTS.md) | Full wearable (Watch 4/5/Ultimate); strict ArkTS, V2 state, hypium |
-| [`apps/watch-lite/`](apps/watch-lite/AGENTS.md) | JS (FA, ES5.1) | [AGENTS.md](apps/watch-lite/AGENTS.md) | Watch GT; **ES5.1 only** (no Promise/globalThis), HML/CSS/JS, callbacks |
+| [`apps/watch-lite/`](apps/watch-lite/AGENTS.md) | JS (FA, JerryScript) | [AGENTS.md](apps/watch-lite/AGENTS.md) | Watch GT; **limited JS** (no Promise/globalThis/spread), HML/CSS/JS, callbacks |
 | [`apps/phone-android/`](apps/phone-android/AGENTS.md) | Kotlin + Compose | [AGENTS.md](apps/phone-android/AGENTS.md) | Companion: P2P↔HA REST; Gradle/JUnit, OkHttp, HMS Wear Engine |
 
 Each app opens as its **own project root** in its IDE (watches → DevEco Studio, companion → Android
