@@ -20,6 +20,21 @@ contract in [docs/p2p-protocol.md](docs/p2p-protocol.md) is what both sides buil
 
 Maturity: clean MVP. Three entity domains (`light`, `switch`, `lock`), EN + RU localization.
 
+## Repository layout (monorepo)
+
+This repo hosts **multiple apps** that drive the same Home Assistant over one shared P2P contract:
+
+- `apps/watch-arkts/` — **this** ArkTS app (full wearable: Watch 4/5/Ultimate). **Default subject of this file.**
+- `apps/watch-lite/` — lite-wearable **JS** app for Watch GT (FA model, ES5.1, HML/CSS/JS, JerryScript). Mirror architecture, *different runtime* — see [docs/platform-constraints.md](docs/platform-constraints.md).
+- `apps/phone-android/` — Android companion (Kotlin), **not written yet**.
+- root: shared AI + knowledge layer (`AGENTS.md`, `CLAUDE.md`, `DEVELOPMENT.md`, `docs/`, `.claude/`).
+
+Unless stated otherwise, everything below describes **`apps/watch-arkts/`**. The lite app shares only
+**design** (the [P2P contract](docs/p2p-protocol.md), domain model, architecture) — never code, since
+ArkTS and lite-JS are different languages/compilers/runtimes ([why](docs/platform-constraints.md)).
+Each app is opened as its own project root in its IDE (`apps/watch-arkts/` and `apps/watch-lite/` in
+DevEco Studio; `apps/phone-android/` in Android Studio) — the git root is the monorepo root.
+
 ## Quick facts
 
 | | |
@@ -32,12 +47,14 @@ Maturity: clean MVP. Three entity domains (`light`, `switch`, `lock`), EN + RU l
 | Transport | Wear Engine P2P (`@kit.WearEngine`), UTF-8 JSON, `v:1` protocol |
 | Production deps | **none** (pure ArkTS) — keep it that way unless discussed |
 | Test/mock libs | `@ohos/hypium`, `@ohos/hamock` (devDependencies) |
-| Module | single `entry` module, source under `entry/src/main/ets/` |
+| Module | single `entry` module, source under `apps/watch-arkts/entry/src/main/ets/` |
+| Repo | **monorepo** — `apps/watch-arkts` (this), `apps/watch-lite` (GT/lite-JS), `apps/phone-android` (companion, TBD) |
 
 ## Build / run / test / lint
 
 This project is driven from **DevEco Studio** — there is **no committed `hvigorw` wrapper**, so
-prefer the IDE actions below. Do not invent CLI build commands; if a headless `hvigorw`/`ohpm`
+prefer the IDE actions below. **Open `apps/watch-arkts/` as the DevEco project root** (the git root is
+the monorepo root, one level up). Do not invent CLI build commands; if a headless `hvigorw`/`ohpm`
 CLI is available in the environment, the equivalents are listed but are not the assumed path.
 
 | Task | DevEco Studio | CLI equivalent (only if tooling present) |
@@ -55,19 +72,26 @@ Test framework is **hypium** (`describe`/`it`/`expect`); `hamock` for mocks. Wor
 ## Where things live
 
 ```
-entry/src/main/ets/
-  pages/          Index, EntityDetails, Settings, About   (route targets)
-  presentation/   store/ (HomeAssistantStore) + ui/components, WatchInsets
-  domain/         model/ (EntityCard, EntityAction, P2pMessages) + repository/ (interface)
-  data/           repository/ (P2p + Mock) + p2p/ (WearEngineP2pClient, PeerDeviceResolver)
-  app/            Services (DI + fallback), AppKeys, AppInfo
-  core/           json, log, utils (uid)
-entry/src/main/resources/   base/ (EN) + ru_RU/ strings, colors, media; profile/main_pages.json
-entry/src/ohosTest/         instrumented tests        entry/src/test/   local unit tests
-docs/                       architecture.md, p2p-protocol.md, adr/
+apps/
+  watch-arkts/    ArkTS — full wearable (THIS app)
+    entry/src/main/ets/
+      pages/          Index, EntityDetails, Settings, About   (route targets)
+      presentation/   store/ (HomeAssistantStore) + ui/components, WatchInsets
+      domain/         model/ (EntityCard, EntityAction, P2pMessages) + repository/ (interface)
+      data/           repository/ (P2p + Mock) + p2p/ (WearEngineP2pClient, PeerDeviceResolver)
+      app/            Services (DI + fallback), AppKeys, AppInfo
+      core/           json, log, utils (uid)
+    entry/src/main/resources/   base/ (EN) + ru_RU/ strings, colors, media; profile/main_pages.json
+    entry/src/{test,ohosTest}/  local unit + instrumented tests
+  watch-lite/     lite-JS — Watch GT (mirror architecture, different runtime)
+    entry/src/main/js/MainAbility/   pages/ + common/ (store, repo, services, utils) + i18n
+  phone-android/  Android companion (Kotlin) — placeholder, not written yet
+docs/             architecture.md, p2p-protocol.md, platform-constraints.md, adr/
+AGENTS.md  CLAUDE.md  DEVELOPMENT.md   shared AI layer (root)
 ```
 
 Full picture: [docs/architecture.md](docs/architecture.md). Decisions: [docs/adr/](docs/adr/).
+Platform constraints (why Watch, not GT): [docs/platform-constraints.md](docs/platform-constraints.md).
 Contribution process & "add a new HA domain" walkthrough: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Architecture in one paragraph
@@ -97,7 +121,7 @@ shaped this way: [ADR-0001](docs/adr/0001-clean-architecture-layering.md)..[0004
 - **Emulator always uses Mock.** No paired phone ⇒ `hasConnectedPeer()` is false ⇒ fallback to
   `MockHomeAssistantRepository`. This is by design, not a bug. Any change must keep Mock working.
 - **`setRemoteApp(bundleName, fingerprint)` is commented out** in
-  [`Services.ets`](entry/src/main/ets/app/Services.ets) — real-device P2P won't connect until the
+  [`Services.ets`](apps/watch-arkts/entry/src/main/ets/app/Services.ets) — real-device P2P won't connect until the
   companion's bundleName + signing fingerprint are filled in.
 - **`module.json5` metadata are placeholders:** `client_id = PUT_YOUR_CLIENT_ID_HERE`,
   `wearEngineRemoteAppNameList = com.yourcompany.ha.bridge`. Don't treat them as real values.

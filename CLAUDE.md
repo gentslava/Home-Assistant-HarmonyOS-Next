@@ -26,7 +26,7 @@ Do not duplicate that content here; this file holds only Claude Code-specific gu
 - **Use the role subagents** in `.claude/agents/` rather than doing everything inline:
   - `arkts-architect` — planning a feature, a layer/contract change, or a new HA domain.
   - `code-reviewer` — review any non-trivial change in a fresh context before commit.
-  - `test-writer` — add/extend hypium tests under `entry/src/test` or `entry/src/ohosTest`.
+  - `test-writer` — add/extend hypium tests under `entry/src/test` or `entry/src/ohosTest` (in `apps/watch-arkts/`).
 - **Verify, don't assume.** A task is done only when the emulator still runs in Mock mode and the
   linter reports no new ArkTS errors/warnings. State the evidence; don't claim success without it.
   This repo has no committed `hvigorw`/CI, so verification is mostly via DevEco Studio — if you

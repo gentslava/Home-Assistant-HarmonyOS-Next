@@ -10,10 +10,19 @@ Thanks for helping improve this project!
 
 ## Repository layout
 
-- `entry/src/main/ets/pages/` — pages (Index, EntityDetails, Settings)
-- `entry/src/main/ets/presentation/` — UI components + store
-- `entry/src/main/ets/domain/` — models + repository interfaces
-- `entry/src/main/ets/data/` — P2P + repositories (real + mock)
+This is a **monorepo** ([ADR-0006](docs/adr/0006-monorepo-structure.md)):
+
+- `apps/watch-arkts/` — ArkTS app, full wearable (Watch 4/5/Ultimate). **The rules below are about this app.**
+- `apps/watch-lite/` — lite-JS app for Watch GT (separate runtime; see [docs/platform-constraints.md](docs/platform-constraints.md)).
+- `apps/phone-android/` — Android companion (Kotlin), not written yet.
+- `docs/` + `AGENTS.md` / `CLAUDE.md` / `DEVELOPMENT.md` — shared knowledge + AI layer (start here).
+
+Inside `apps/watch-arkts/entry/src/main/ets/`:
+
+- `pages/` — pages (Index, EntityDetails, Settings, About)
+- `presentation/` — UI components + store
+- `domain/` — models + repository interfaces
+- `data/` — P2P + repositories (real + mock)
 
 ## Development rules (important)
 
@@ -48,6 +57,10 @@ Test on:
 3. Implement phone-side REST call to HA
 4. Add mock entities + actions for emulator testing
 5. Add screenshots if UI changes
+
+> Steps 1–2 and 4 apply to **each watch app** (`watch-arkts` in ArkTS, `watch-lite` in JS) — same
+> design, separate code. Step 2 touches the shared [P2P contract](docs/p2p-protocol.md): bump `v`
+> and keep both apps in sync.
 
 ## Commit style
 

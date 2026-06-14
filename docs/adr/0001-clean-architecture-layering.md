@@ -12,7 +12,7 @@ stable while adapters and UI change.
 
 ## Decision
 
-We organize `entry/src/main/ets/` into layers with dependencies pointing inward:
+We organize `apps/watch-arkts/entry/src/main/ets/` into layers with dependencies pointing inward:
 
 - `domain/` — pure ArkTS models and the `HomeAssistantRepository` interface. No imports from
   `data/`, `presentation/`, or HarmonyOS kits.

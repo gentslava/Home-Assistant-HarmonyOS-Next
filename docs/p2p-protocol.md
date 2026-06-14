@@ -8,8 +8,8 @@ message shape is a breaking change — bump `v` and update both sides together
 (see [ADR-0003](adr/0003-wear-engine-p2p-transport.md)).
 
 The authoritative ArkTS definitions are in
-[`P2pMessages.ets`](../entry/src/main/ets/domain/model/P2pMessages.ets) and
-[`EntityCard.ets`](../entry/src/main/ets/domain/model/EntityCard.ets). This doc must stay in
+[`P2pMessages.ets`](../apps/watch-arkts/entry/src/main/ets/domain/model/P2pMessages.ets) and
+[`EntityCard.ets`](../apps/watch-arkts/entry/src/main/ets/domain/model/EntityCard.ets). This doc must stay in
 sync with them; if they diverge, the `.ets` files win and this doc is a bug.
 
 ## Transport
@@ -19,7 +19,7 @@ sync with them; if they diverge, the `.ets` files win and this doc is a bug.
 - **Peer pairing:** the watch resolves the first connected device and targets the companion by
   `remoteApp = { bundleName, fingerprint }`. ⚠️ These are configured via
   `WearEngineP2pClient.setRemoteApp(...)` and are **currently commented out** in
-  [`Services.ets`](../entry/src/main/ets/app/Services.ets) — real-device P2P will not connect
+  [`Services.ets`](../apps/watch-arkts/entry/src/main/ets/app/Services.ets) — real-device P2P will not connect
   until the companion's bundleName + signing fingerprint are filled in.
 - **Direction:** the watch is always the initiator. The companion only sends replies (it never
   pushes unsolicited messages in v1).
@@ -32,7 +32,7 @@ and resolves it when a reply with the same `id` arrives. Implications for the co
 - **Echo the request `id` verbatim** in the reply. A reply with a wrong/missing `id` is dropped.
 - Replies may be returned **out of order**; the watch correlates by `id`, not by arrival order.
 - The watch enforces an **8s timeout** per request
-  ([`P2pHomeAssistantRepository`](../entry/src/main/ets/data/repository/P2pHomeAssistantRepository.ets)).
+  ([`P2pHomeAssistantRepository`](../apps/watch-arkts/entry/src/main/ets/data/repository/P2pHomeAssistantRepository.ets)).
   After that the promise rejects and the reply is ignored even if it arrives late.
 - During startup, `hasConnectedPeer()` and repo init are additionally bounded to **1200ms**
   before the app falls back to mock data.

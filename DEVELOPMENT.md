@@ -54,7 +54,7 @@ There is **no committed `hvigorw` and no CI** — verification is currently manu
 
 - **Runs on the emulator in Mock mode** (no clipped UI on the round screen).
 - **Code Linter reports no new ArkTS errors/warnings** (`code-linter.json5`).
-- **Relevant tests pass** (`entry/src/test` local unit; `entry/src/ohosTest` instrumented).
+- **Relevant tests pass** (`entry/src/test` local unit; `entry/src/ohosTest` instrumented, under `apps/watch-arkts/`).
 - Sync/actions still work (or Mock still works).
 
 If you cannot run a check in your environment, say so explicitly and hand the exact steps to the

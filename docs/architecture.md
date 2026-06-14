@@ -4,6 +4,11 @@ High-level map of the watch app. Read this before touching code that crosses lay
 (UI ↔ store ↔ repository ↔ transport). For the wire format between watch and phone,
 see [p2p-protocol.md](p2p-protocol.md). For *why* things are the way they are, see [adr/](adr/).
 
+> **Scope.** This document describes **`apps/watch-arkts/`** — the ArkTS app for the full wearable
+> class (Watch 4/5/Ultimate). The repo is a [monorepo](adr/0006-monorepo-structure.md); the lite-JS
+> app for Watch GT (`apps/watch-lite/`) mirrors this architecture in a different runtime
+> ([platform-constraints.md](platform-constraints.md)).
+
 ## What this app is
 
 A wearable Home Assistant client for Huawei **Watch 4/5/Ultimate** (HarmonyOS Next, ArkTS + ArkUI).
@@ -25,7 +30,7 @@ treat [p2p-protocol.md](p2p-protocol.md) as the source of truth when building ei
 
 ## Layers (Clean Architecture)
 
-Source root: `entry/src/main/ets/`. Dependencies point inward: `presentation → domain ← data`.
+Source root: `apps/watch-arkts/entry/src/main/ets/`. Dependencies point inward: `presentation → domain ← data`.
 `domain` knows nothing about ArkUI, Wear Engine, or JSON.
 
 ```
@@ -55,12 +60,12 @@ core/           framework-agnostic helpers: json (toJson/fromJson), log (Logger)
 | `presentation/` | Talks to `domain` types and the store. Never imports `data/` directly. |
 | `app/` | The only place that wires a concrete repository to the interface (`Services`). |
 
-The seam is `HomeAssistantRepository` ([interface](../entry/src/main/ets/domain/repository/HomeAssistantRepository.ets)).
+The seam is `HomeAssistantRepository` ([interface](../apps/watch-arkts/entry/src/main/ets/domain/repository/HomeAssistantRepository.ets)).
 Swapping P2P for Mock — or, later, a direct-REST or cloud transport — touches only `data/` and `Services`.
 
 ## Startup flow
 
-`EntryAbility.onWindowStageCreate` ([source](../entry/src/main/ets/entryability/EntryAbility.ets)):
+`EntryAbility.onWindowStageCreate` ([source](../apps/watch-arkts/entry/src/main/ets/entryability/EntryAbility.ets)):
 
 1. `AppStorageV2.connect(HomeAssistantStore, …)` — register the global store.
 2. `windowStage.loadContent('pages/Index')` — render UI immediately.
@@ -69,7 +74,7 @@ Swapping P2P for Mock — or, later, a direct-REST or cloud transport — touche
 Step 3 is intentionally not awaited: **UI must never block on P2P init or the network**
 (see [ADR-0002](adr/0002-repository-pattern-mock-fallback.md) and CONTRIBUTING rule #2).
 
-`Services.initWithFallback` ([source](../entry/src/main/ets/app/Services.ets)):
+`Services.initWithFallback` ([source](../apps/watch-arkts/entry/src/main/ets/app/Services.ets)):
 
 ```
 tryInitRealRepo(ctx, 1200ms)            ── on any failure / timeout ──▶  new MockHomeAssistantRepository()
@@ -97,18 +102,18 @@ The store is the single entry point for the UI. UI components call store methods
 | Refresh one entity | `refreshEntity(id)` | `repo.syncEntityCard(id)` | `SYNC_ENTITY_REQUEST` → `SYNC_ENTITY_RESPONSE` |
 | Tap an action | `runAction(action)` | `repo.callAction(action)` | `CALL_SERVICE` → `ACK` |
 
-`HomeAssistantStore` ([source](../entry/src/main/ets/presentation/store/HomeAssistantStore.ets)) exposes three
+`HomeAssistantStore` ([source](../apps/watch-arkts/entry/src/main/ets/presentation/store/HomeAssistantStore.ets)) exposes three
 `@Trace` fields the UI binds to: `cards`, `isSyncing`, `lastError`. State management uses the
 **V2 family only** (`@ObservedV2`/`@Trace`/`@ComponentV2`/`AppStorageV2`) — see
 [ADR-0004](adr/0004-componentv2-appstoragev2-state.md). Do not mix V1 (`@State`/`@Observed`) decorators.
 
-In `P2pHomeAssistantRepository` ([source](../entry/src/main/ets/data/repository/P2pHomeAssistantRepository.ets)),
+In `P2pHomeAssistantRepository` ([source](../apps/watch-arkts/entry/src/main/ets/data/repository/P2pHomeAssistantRepository.ets)),
 each request gets a unique `id` and is parked in a `pending` map until the matching reply arrives,
 with an **8s timeout** per request. Correlation is by `id`, so replies may arrive out of order.
 
 ## Domain model
 
-`EntityCard` ([source](../entry/src/main/ets/domain/model/EntityCard.ets)) is what the UI renders;
+`EntityCard` ([source](../apps/watch-arkts/entry/src/main/ets/domain/model/EntityCard.ets)) is what the UI renders;
 `EntityAction` is a self-describing HA service call (`domain` + `service` + `data`). The watch is
 **presentation-only**: the companion decides which actions a card exposes, the watch just renders
 them and echoes the action back on tap. Adding a new HA domain is therefore mostly a
