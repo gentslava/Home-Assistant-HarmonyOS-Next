@@ -1,0 +1,23 @@
+{
+  "strings": {
+    "home_title": "Мой дом",
+
+    "action_sync": "Sync",
+    "action_loading": "...",
+
+    "index_settings_label": "Настройки",
+    "index_settings_description": "Параметры приложения",
+
+    "about_support_text": "По вопросам и поддержке обращайтесь:",
+    "about_contact_line1": "GitHub: gentslava/home-assistant-harmonyos-next",
+    "about_contact_line2": "Telegram: @gentslava",
+    "about_version_label": "Версия:",
+
+    "entity_light_enable_label": "Вкл.",
+    "entity_light_disable_label": "Выкл.",
+    "entity_lock_enable_label": "Закрыть",
+    "entity_lock_disable_label": "Открыть",
+    "entity_switch_enable_label": "Вкл.",
+    "entity_switch_disable_label": "Выкл."
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "strings": {
+    "home_title": "Home",
+
+    "action_sync": "Sync",
+    "action_loading": "...",
+
+    "index_settings_label": "Settings",
+    "index_settings_description": "App preferences",
+
+    "about_support_text": "For questions and support:",
+    "about_contact_line1": "GitHub: gentslava/home-assistant-harmonyos-next",
+    "about_contact_line2": "Telegram: @gentslava",
+    "about_version_label": "Version:",
+
+    "entity_light_enable_label": "On",
+    "entity_light_disable_label": "Off",
+    "entity_lock_enable_label": "Lock",
+    "entity_lock_disable_label": "Unlock",
+    "entity_switch_enable_label": "On",
+    "entity_switch_disable_label": "Off"
+  }
+}

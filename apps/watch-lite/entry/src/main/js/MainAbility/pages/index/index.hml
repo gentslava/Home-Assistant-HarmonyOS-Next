@@ -1,0 +1,39 @@
+<div class="container" on:swipe="onSwipe">
+    <list class="list" scrollpage="true">
+        <list-item class="titleItem">
+            <text class="titleText">{{ $t('strings.home_title') }}</text>
+        </list-item>
+
+        <list-item for="{{items}}" class="row">
+            <div class="card" on:click="openEntity($item)">
+                <div class="iconCircle" style="background-color: {{$item.color}};">
+                    <image class="iconImg" src="{{$item.iconSrc}}"></image>
+                </div>
+
+                <div class="texts">
+                    <text class="name">{{$item.name}}</text>
+                    <text class="state">{{$item.state}}</text>
+                </div>
+
+                <text class="chevron">›</text>
+            </div>
+        </list-item>
+
+        <list-item class="row" on:click="openSettings">
+            <div class="card">
+                <div class="iconCircle settingsCircle">
+                    <image class="iconImg" src="/common/icons/settings.png"></image>
+                </div>
+
+                <div class="texts">
+                    <text class="name">{{ $t('strings.index_settings_label') }}</text>
+                    <text class="state">{{ $t('strings.index_settings_description') }}</text>
+                </div>
+
+                <text class="chevron">›</text>
+            </div>
+        </list-item>
+
+        <list-item class="bottomSpace"></list-item>
+    </list>
+</div>

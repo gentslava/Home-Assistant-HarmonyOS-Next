@@ -1,0 +1,23 @@
+<div class="container" on:swipe="onSwipe">
+    <div class="content">
+        <image if="{{!!logoSrc}}" class="logo" src="{{logoSrc}}"></image>
+        <div else class="logoBox">
+            <text class="logoFallback">HA</text>
+        </div>
+
+        <text class="appName">Home Assistant</text>
+
+        <text class="supportText">{{$t('strings.about_support_text')}}</text>
+
+        <text class="contactLine">GitHub:</text>
+        <text class="contactValue">gentslava/home-assistant-harmonyos-next</text>
+
+        <text class="contactLine">Telegram:</text>
+        <text class="contactValue">@gentslava</text>
+
+        <div class="versionRow">
+            <text class="versionLabel">{{$t('strings.about_version_label')}}</text>
+            <text class="versionValue">{{versionName}}</text>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+<div class="container" on:swipe="onSwipe">
+    <list class="list" scrollpage="true">
+        <list-item class="titleItem">
+            <text class="titleText">{{name}}</text>
+            <text class="titleState">State: {{state}}</text>
+        </list-item>
+
+    <!-- CLICK ON list-item (not inner div) -->
+        <list-item for="{{actions}}" class="row" on:click="onAction($item)">
+            <div class="card">
+                <div class="iconCircle" style="background-color: {{$item.color}};">
+                    <image class="iconImg" src="{{$item.iconSrc}}"></image>
+                </div>
+
+                <div class="texts">
+                    <text class="name">{{$item.name}}</text>
+                    <text class="state">{{$item.state}}</text>
+                </div>
+
+                <text class="chevron">›</text>
+            </div>
+        </list-item>
+
+        <list-item class="bottomSpace"></list-item>
+    </list>
+</div>

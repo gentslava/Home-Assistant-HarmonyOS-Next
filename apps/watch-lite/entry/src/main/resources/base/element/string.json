@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "Main screen for controlling Home Assistant devices."
+    },
+    {
+      "name": "MainAbility_desc",
+      "value": "Home Assistant client for Huawei Watch."
+    },
+    {
+      "name": "MainAbility_label",
+      "value": "Home Assistant"
+    }
+  ]
+}

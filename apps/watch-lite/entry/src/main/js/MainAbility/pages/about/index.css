@@ -1,0 +1,99 @@
+.container {
+  width: 100%;
+  height: 100%;
+}
+
+/* Центровка без flex на корне — через content */
+.content {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.logoBox {
+  width: 80px;
+  height: 80px;
+  border-radius: 40px;
+  background-color: #1F1F1F;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-bottom: 12px;
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+}
+
+.logoFallback {
+  font-size: 22px;
+  color: #EDE5E2;
+}
+
+.appName {
+  width: 100%;
+  text-align: center;
+  font-size: 28px;
+  color: #EDE5E2;
+  margin-bottom: 12px;
+}
+
+.supportText {
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+  color: #9AA0A6;
+  margin-bottom: 14px;
+}
+
+.contactLine {
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  color: #9AA0A6;
+  margin-bottom: 4px;
+}
+
+.contactValue {
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+  color: #EDE5E2;
+  margin-bottom: 10px;
+}
+
+.versionRow {
+  width: 100%;
+  height: 24px;        /* важно: задать высоту */
+  margin-top: 8px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.versionLabel {
+  font-size: 16px;
+  color: #9AA0A6;
+}
+
+.versionValue {
+  font-size: 16px;
+  color: #9AA0A6;
+  margin-left: 8px;
+}
+
+.hint {
+  margin-top: 14px;
+  font-size: 14px;
+  color: #5A5A5A;
+  text-align: center;
+  width: 100%;
+}
