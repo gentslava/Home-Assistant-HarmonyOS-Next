@@ -21,11 +21,12 @@ into HA REST calls, and replies. Built against the shared contract
 | P2P↔HA bridge (`bridge/HaBridge.kt`) — transport-agnostic, unit-tested | ✅ done |
 | Config UI — HA URL + token, connect & list entities (`MainActivity.kt`) | ✅ done |
 | Unit tests (mapper, P2P parse) | ✅ done |
-| **Wear Engine P2P transport** (talk to the watch) | ⏳ next — needs AGC credentials |
+| Wear Engine P2P transport (`WearEngineP2pService`, wired to `MainActivity`) | ✅ code — needs AGC credentials + watch fingerprint |
 
-Right now the app builds, connects to HA, and lists real light/switch/lock entities on the phone.
-What's missing for end-to-end is the **Wear Engine transport** that carries `HaBridge` messages to
-and from the watch.
+The full path is coded: the app connects to HA, and `WearEngineP2pService` receives watch requests,
+runs them through `HaBridge`, and replies. To go live you still need the **AGC setup** below
+(Wear Engine enabled + fingerprints) — fill `PEER_FINGERPRINT` in `WearEngineP2pService.kt` and
+register the companion's fingerprint in AppGallery Connect.
 
 ## Stack
 

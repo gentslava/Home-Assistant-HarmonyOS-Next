@@ -52,8 +52,10 @@ dependencies {
     // Secure storage for HA URL + token
     implementation(libs.androidx.security.crypto)
 
-    // Wear Engine — enable in Phase 1e (also uncomment the agconnect plugin + add agconnect-services.json)
-    // implementation(libs.huawei.wearengine)
+    // Wear Engine (Phase 1e). Needs the Huawei maven repo (already in settings.gradle.kts) and AGC:
+    // Wear Engine enabled + this app's SHA-256 fingerprint registered. The agconnect plugin is NOT
+    // required for plain P2P, so the project still builds without agconnect-services.json.
+    implementation(libs.huawei.wearengine)
 
     testImplementation(libs.junit)
 }

@@ -27,15 +27,23 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import ru.gentslava.homeassistant.companion.bridge.EntityMapper
+import ru.gentslava.homeassistant.companion.bridge.HaBridge
 import ru.gentslava.homeassistant.companion.ha.HaClient
 import ru.gentslava.homeassistant.companion.ha.HaConfig
 import ru.gentslava.homeassistant.companion.p2p.EntityCard
+import ru.gentslava.homeassistant.companion.p2p.WearEngineP2pService
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val config = HaConfig(this)
         val client = HaClient(config)
+
+        // Start the watch transport so a paired watch can reach HA through this companion.
+        // (Wear Engine asks for the DEVICE_MANAGER permission on first run.)
+        val p2p = WearEngineP2pService(this, HaBridge(client))
+        if (config.isConfigured) p2p.start()
+
         setContent {
             MaterialTheme(colorScheme = darkColorScheme()) {
                 Surface(Modifier.fillMaxSize()) { CompanionScreen(config, client) }
