@@ -4,6 +4,10 @@
             <text class="titleText">{{ $t('strings.home_title') }}</text>
         </list-item>
 
+        <list-item class="statusItem" show="{{statusText}}">
+            <text class="statusText">{{statusText}}</text>
+        </list-item>
+
         <list-item for="{{items}}" class="row">
             <div class="card" on:click="openEntity($item)">
                 <div class="iconCircle" style="background-color: {{$item.color}};">
