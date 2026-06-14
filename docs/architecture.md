@@ -6,7 +6,9 @@ see [p2p-protocol.md](p2p-protocol.md). For *why* things are the way they are, s
 
 ## What this app is
 
-A wearable Home Assistant client for Huawei watches (HarmonyOS Next, ArkTS + ArkUI).
+A wearable Home Assistant client for Huawei **Watch 4/5/Ultimate** (HarmonyOS Next, ArkTS + ArkUI).
+The Watch **GT** series is not a target — it runs as lite wearable; see
+[platform-constraints.md](platform-constraints.md).
 The watch has **no direct network access to Home Assistant**. It talks to an Android
 **companion app** over Wear Engine P2P; the companion holds the HA REST connection.
 

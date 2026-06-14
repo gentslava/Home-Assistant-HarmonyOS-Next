@@ -1,4 +1,4 @@
-# Home Assistant for Huawei Watch on HarmonyOS Next 6.0 (Watch GT 4/5/6)
+# Home Assistant for Huawei Watch on HarmonyOS Next (Watch 4/5/Ultimate)
 
 [![HarmonyOS API](https://img.shields.io/badge/HarmonyOS-API%2021-1E88FF)](#requirements)
 [![Language](https://img.shields.io/badge/ArkTS-%40kit.ArkUI-6A5ACD)](#tech-stack)
@@ -6,8 +6,12 @@
 [![UI](https://img.shields.io/badge/UI-ArcList%20%2B%20ArcScrollBar-FF9800)](#ui-round-screen)
 [![Home%20Assistant](https://img.shields.io/badge/Home%20Assistant-REST%20API-41BDF5)](https://developers.home-assistant.io/docs/api/rest/)
 
-A wearable client for **Home Assistant** on Huawei watches (e.g. Watch GT 6) built with **HarmonyOS ArkTS**.
+A wearable client for **Home Assistant** on Huawei smartwatches (Watch 4/5/Ultimate) built with **HarmonyOS ArkTS**.
 The watch app works together with an **Android phone companion** via **Wear Engine P2P messaging**.
+
+> **Target device class.** This ArkTS app runs on the **full wearable** class (Watch 4/5/Ultimate).
+> The **Watch GT** series is a *lite wearable* and physically rejects ArkTS Stage HAPs — it is served
+> by a separate lite-JS track. See [docs/platform-constraints.md](docs/platform-constraints.md).
 
 - Home Assistant REST API: https://developers.home-assistant.io/docs/api/rest/
 - Wear Engine P2P communication: https://developer.huawei.com/consumer/en/doc/harmonyos-guides/watch_p2p_communication
@@ -100,6 +104,7 @@ It looks and behaves closer to system apps than a rectangular `List` + heavy saf
 ## Requirements
 
 - DevEco Studio
+- Target device: **Huawei Watch 4/5/Ultimate** (full wearable). Watch GT is lite wearable and does **not** run this ArkTS app — see [docs/platform-constraints.md](docs/platform-constraints.md)
 - Target API: **21**
 - Watch UI: `ArcList` / `ArcScrollBar`
 - A Home Assistant instance reachable from the phone (local network recommended for the initial setup)

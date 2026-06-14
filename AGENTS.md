@@ -9,8 +9,11 @@ wrong by default, and how this repo expects work to happen. Prune anything that 
 
 ## What this is
 
-A wearable **Home Assistant** client for Huawei watches (Watch GT 4/5/6) on **HarmonyOS Next**,
-written in **ArkTS + ArkUI**. The watch has no direct network path to Home Assistant: it talks to
+A wearable **Home Assistant** client for Huawei **Watch 4/5/Ultimate** (full wearable class) on
+**HarmonyOS Next**, written in **ArkTS + ArkUI**. The **Watch GT** series is *not* a target — it runs
+as lite wearable and physically rejects this ArkTS HAP (see
+[docs/platform-constraints.md](docs/platform-constraints.md)). The watch has no direct network path to
+Home Assistant: it talks to
 an Android **companion app** over **Wear Engine P2P**, and the companion holds the HA REST
 connection. The companion lives in a **separate repository and is not written yet** — the wire
 contract in [docs/p2p-protocol.md](docs/p2p-protocol.md) is what both sides build against.
@@ -21,7 +24,7 @@ Maturity: clean MVP. Three entity domains (`light`, `switch`, `lock`), EN + RU l
 
 | | |
 |---|---|
-| Platform | HarmonyOS Next, `wearable` device type, round screen |
+| Platform | HarmonyOS Next, `wearable` device type, round screen — **Watch 4/5/Ultimate, not Watch GT** ([why](docs/platform-constraints.md)) |
 | Language / UI | ArkTS, ArkUI (`@kit.ArkUI`), `ArcList`/`ArcScrollBar` |
 | SDK | target `6.0.1(21)`, compatible `6.0.0(20)`; minAPI 20 / targetAPI 21 |
 | Bundle | `ru.gentslava.homeassistant`, version `1.0.0` |
