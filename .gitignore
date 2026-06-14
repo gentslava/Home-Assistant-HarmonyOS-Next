@@ -1,12 +1,23 @@
-/node_modules
-/oh_modules
-/local.properties
-/.idea
-**/build
-/.hvigor
-.cxx
-/.clangd
-/.clang-format
-/.clang-tidy
-**/.test
-/.appanalyzer
+# Monorepo .gitignore — recursive across apps/*
+
+# Dependencies
+**/node_modules/
+**/oh_modules/
+
+# Build output / tooling caches
+**/build/
+**/.hvigor/
+**/.cxx/
+**/.cache/
+
+# IDE / local config
+**/.idea/
+**/local.properties
+**/.clangd
+**/.clang-format
+**/.clang-tidy
+**/.test/
+**/.appanalyzer/
+
+# OS
+.DS_Store

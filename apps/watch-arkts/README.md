@@ -11,7 +11,7 @@ The watch app works together with an **Android phone companion** via **Wear Engi
 
 > **Target device class.** This ArkTS app runs on the **full wearable** class (Watch 4/5/Ultimate).
 > The **Watch GT** series is a *lite wearable* and physically rejects ArkTS Stage HAPs — it is served
-> by a separate lite-JS track. See [docs/platform-constraints.md](docs/platform-constraints.md).
+> by a separate lite-JS track. See [docs/platform-constraints.md](../../docs/platform-constraints.md).
 
 - Home Assistant REST API: https://developers.home-assistant.io/docs/api/rest/
 - Wear Engine P2P communication: https://developer.huawei.com/consumer/en/doc/harmonyos-guides/watch_p2p_communication
@@ -23,7 +23,7 @@ The watch app works together with an **Android phone companion** via **Wear Engi
 
 | Index (Entities list)                | Entity details (Services Actions)                     | Settings |
 |--------------------------------------|-------------------------------------------------------|---|
-| ![Index](docs/screenshots/index.png) | ![EntityDetails](docs/screenshots/entity_details.png) | ![Settings](docs/screenshots/settings.png) |
+| ![Index](../../docs/screenshots/index.png) | ![EntityDetails](../../docs/screenshots/entity_details.png) | ![Settings](../../docs/screenshots/settings.png) |
 
 ---
 
@@ -104,7 +104,7 @@ It looks and behaves closer to system apps than a rectangular `List` + heavy saf
 ## Requirements
 
 - DevEco Studio
-- Target device: **Huawei Watch 4/5/Ultimate** (full wearable). Watch GT is lite wearable and does **not** run this ArkTS app — see [docs/platform-constraints.md](docs/platform-constraints.md)
+- Target device: **Huawei Watch 4/5/Ultimate** (full wearable). Watch GT is lite wearable and does **not** run this ArkTS app — see [docs/platform-constraints.md](../../docs/platform-constraints.md)
 - Target API: **21**
 - Watch UI: `ArcList` / `ArcScrollBar`
 - A Home Assistant instance reachable from the phone (local network recommended for the initial setup)
@@ -149,7 +149,7 @@ Remote mode can be added later (HA Cloud / external URL + TLS).
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ---
 
