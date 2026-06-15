@@ -104,6 +104,17 @@ class EntityMapperTest {
         assertNull(EntityMapper.toCard(state("media_player.tv", "playing")))
     }
 
+    @Test fun unavailableEntityHasNoActions() {
+        val card = EntityMapper.toCard(state("light.kitchen", "unavailable"))!!
+        assertNull(card.primary)
+        assertTrue(card.secondary.isEmpty())
+        assertEquals("unavailable", card.state) // state still passes through
+    }
+
+    @Test fun unknownStateHasNoPrimary() {
+        assertNull(EntityMapper.toCard(state("switch.router", "unknown"))!!.primary)
+    }
+
     @Test fun cardsKeepsOnlySupportedDomains() {
         val cards = EntityMapper.cards(
             listOf(

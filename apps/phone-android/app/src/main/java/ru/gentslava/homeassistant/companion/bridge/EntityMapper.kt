@@ -40,7 +40,10 @@ object EntityMapper {
         else -> s.state
     }
 
-    private fun primaryAction(s: HaState): EntityAction? = when (s.domain) {
+    private fun primaryAction(s: HaState): EntityAction? {
+        // unavailable/unknown entities get no actionable primary (see ha-integration-notes.md).
+        if (!s.isAvailable) return null
+        return when (s.domain) {
         "lock" -> if (s.state == "locked") {
             action("Unlock", "lock", "unlock", s.entityId)
         } else {
@@ -57,9 +60,12 @@ object EntityMapper {
         "sensor" -> null
         // light / switch
         else -> action("Toggle", s.domain, "toggle", s.entityId)
+        }
     }
 
-    private fun secondaryActions(s: HaState): List<EntityAction> = when (s.domain) {
+    private fun secondaryActions(s: HaState): List<EntityAction> {
+        if (!s.isAvailable) return emptyList()
+        return when (s.domain) {
         "light" -> listOf(
             action("On", "light", "turn_on", s.entityId),
             action("Off", "light", "turn_off", s.entityId),
@@ -74,6 +80,7 @@ object EntityMapper {
             action("Stop", "cover", "stop_cover", s.entityId),
         )
         else -> emptyList()
+        }
     }
 
     private fun action(label: String, domain: String, service: String, entityId: String) =

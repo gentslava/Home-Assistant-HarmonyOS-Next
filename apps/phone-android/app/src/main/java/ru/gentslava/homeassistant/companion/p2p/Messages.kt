@@ -6,6 +6,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.intOrNull
 
 /**
  * Wire types for the watch <-> phone P2P protocol. Mirror of docs/p2p-protocol.md (v1).
@@ -87,10 +88,17 @@ data class CallServiceRequest(
     val data: Map<String, String>,
 ) : IncomingMsg
 
+/** A request whose protocol `v` this companion doesn't speak — answered with an error ACK. */
+data class UnsupportedVersion(override val id: String, val v: Int) : IncomingMsg
+
 /** Parse one inbound JSON message. Returns null if it's not a recognized request. */
 fun parseIncoming(json: String): IncomingMsg? = runCatching {
     val obj = P2pJson.parseToJsonElement(json).jsonObject
     val id = obj["id"]?.jsonPrimitive?.contentOrNull ?: return null
+    // Guard the contract version: a message tagged with a different `v` is answered explicitly
+    // (UnsupportedVersion -> error ACK) instead of being silently mis-parsed as v1.
+    val v = obj["v"]?.jsonPrimitive?.intOrNull
+    if (v != null && v != PROTOCOL_VERSION) return UnsupportedVersion(id, v)
     when (obj["type"]?.jsonPrimitive?.contentOrNull) {
         "SYNC_REQUEST" -> SyncRequest(id)
         "SYNC_ENTITY_REQUEST" -> {

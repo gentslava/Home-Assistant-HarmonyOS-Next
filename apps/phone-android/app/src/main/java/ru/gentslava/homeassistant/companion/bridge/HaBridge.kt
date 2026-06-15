@@ -9,6 +9,7 @@ import ru.gentslava.homeassistant.companion.p2p.SyncEntityRequest
 import ru.gentslava.homeassistant.companion.p2p.SyncEntityResponse
 import ru.gentslava.homeassistant.companion.p2p.SyncRequest
 import ru.gentslava.homeassistant.companion.p2p.SyncResponse
+import ru.gentslava.homeassistant.companion.p2p.UnsupportedVersion
 import ru.gentslava.homeassistant.companion.p2p.parseIncoming
 
 /**
@@ -35,6 +36,10 @@ class HaBridge(private val client: HaClient) {
         is CallServiceRequest -> client.callService(msg.domain, msg.service, msg.data).fold(
             onSuccess = { encode(Ack(id = msg.id, ok = true)) },
             onFailure = { ackError(msg.id, it) },
+        )
+
+        is UnsupportedVersion -> encode(
+            Ack(id = msg.id, ok = false, error = "unsupported protocol v${msg.v}"),
         )
 
         null -> null

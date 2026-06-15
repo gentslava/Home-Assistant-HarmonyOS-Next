@@ -39,6 +39,9 @@ class WearEngineP2pService(
         setPeerFingerPrint(PEER_FINGERPRINT)
     }
 
+    // Written from HMS callbacks, read from send coroutines on Dispatchers.Default — needs a
+    // memory barrier so sendRaw never reads a stale null after the device is found.
+    @Volatile
     private var device: Device? = null
 
     private val receiver = Receiver { message: Message ->

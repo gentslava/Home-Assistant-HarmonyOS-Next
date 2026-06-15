@@ -10,6 +10,7 @@ import ru.gentslava.homeassistant.companion.p2p.CallServiceRequest
 import ru.gentslava.homeassistant.companion.p2p.P2pJson
 import ru.gentslava.homeassistant.companion.p2p.SyncEntityRequest
 import ru.gentslava.homeassistant.companion.p2p.SyncRequest
+import ru.gentslava.homeassistant.companion.p2p.UnsupportedVersion
 import ru.gentslava.homeassistant.companion.p2p.parseIncoming
 
 class MessagesTest {
@@ -42,6 +43,19 @@ class MessagesTest {
     @Test fun unknownTypeReturnsNull() {
         assertNull(parseIncoming("""{"v":1,"id":"x","type":"NONSENSE"}"""))
         assertNull(parseIncoming("not json"))
+    }
+
+    @Test fun futureProtocolVersionIsRejected() {
+        val msg = parseIncoming("""{"v":2,"id":"sync-9","type":"SYNC_REQUEST"}""")
+        assertTrue(msg is UnsupportedVersion)
+        msg as UnsupportedVersion
+        assertEquals("sync-9", msg.id)
+        assertEquals(2, msg.v)
+    }
+
+    @Test fun missingVersionIsTolerated() {
+        // Absent v is treated as current (lenient) — still parses as the typed request.
+        assertTrue(parseIncoming("""{"id":"sync-1","type":"SYNC_REQUEST"}""") is SyncRequest)
     }
 
     @Test fun ackSerializesWithProtocolFields() {
