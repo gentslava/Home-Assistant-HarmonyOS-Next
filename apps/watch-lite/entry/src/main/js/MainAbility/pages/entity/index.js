@@ -46,6 +46,11 @@ export default {
         this.iconSrc = p.iconSrc ? String(p.iconSrc) : '/common/icons/unknown.png';
         this.domain = domainFromEntityId(this.entityId);
 
+        // Companion-authored actions (the contract: the watch renders these, it doesn't decide
+        // HA semantics). Kept for _rebuildActions; the local table is only a mock/offline fallback.
+        this.primary = p.primary || null;
+        this.secondary = p.secondary || [];
+
         const store = ensureStore();
         const saved = store.statesById[this.entityId];
         this.state = saved !== undefined ? saved : (p.state ? String(p.state) : '—');
@@ -77,6 +82,34 @@ export default {
         const ICON_COVER = '/common/icons/cover.png';
         const ICON_SCENE = '/common/icons/scene.png';
         const st = String(this.state || '');
+
+        // Preferred path: render the companion-provided actions (primary + secondary) verbatim.
+        // Falls through to the local per-domain table only when there are none (mock/offline).
+        const companion = [];
+        if (this.primary) companion.push(this.primary);
+        if (this.secondary && this.secondary.length) {
+            for (let i = 0; i < this.secondary.length; i++) companion.push(this.secondary[i]);
+        }
+        if (companion.length > 0) {
+            const items = [];
+            for (let i = 0; i < companion.length; i++) {
+                const a = companion[i];
+                items.push({
+                    id: a.service, name: a.label, state: 'Call service',
+                    iconSrc: this.iconSrc, color: actionColorBlue(),
+                    domain: a.domain, service: a.service, data: a.data
+                });
+            }
+            this.actions = items;
+            return;
+        }
+
+        if (this.domain === 'sensor') {
+            // Read-only (also the companion sensor case: no primary, empty secondary).
+            this.actions = [];
+            this.statusText = 'Read-only';
+            return;
+        }
 
         if (this.domain === 'light' || this.domain === 'switch') {
             if (st === 'on') {
@@ -136,13 +169,6 @@ export default {
             return;
         }
 
-        if (this.domain === 'sensor') {
-            // Read-only: no actions, just the state header.
-            this.actions = [];
-            this.statusText = 'Read-only';
-            return;
-        }
-
         this.actions = [{ id: 'toggle', name: 'Toggle', state: 'Call service', iconSrc: ICON_POWER, color: actionColorGray() }];
     },
 
@@ -152,7 +178,11 @@ export default {
         this.statusText = '';
 
         const self = this;
-        const service = action && action.id ? String(action.id) : '';
+        // Action items carry the companion's domain/service/data; fall back to local fields.
+        const service = action && action.service ? String(action.service)
+            : (action && action.id ? String(action.id) : '');
+        const domain = action && action.domain ? String(action.domain) : this.domain;
+        const data = action && action.data ? action.data : { entity_id: this.entityId };
         const prevState = this.state;
 
         // 1) optimistic local + store update (so the list reflects it immediately)
@@ -174,7 +204,7 @@ export default {
 
         // 2) call HA via the companion; confirm or roll back
         callAction(
-            { domain: this.domain, service: service, data: { entity_id: this.entityId } },
+            { domain: domain, service: service, data: data },
             function () {
                 syncEntity(self.entityId, function (card) {
                     if (card) self._setState(card.state);
@@ -198,7 +228,9 @@ export default {
             name: this.name,
             state: next,
             iconSrc: this.iconSrc,
-            domain: this.domain
+            domain: this.domain,
+            primary: this.primary,
+            secondary: this.secondary
         };
     },
 
