@@ -37,7 +37,9 @@ data class EntityCard(
     val name: String,
     val state: String,
     val icon: String? = null,
-    val primary: EntityAction,
+    // Omitted for read-only cards (e.g. sensor): the watch renders no primary tile. Additive,
+    // backward-compatible — existing senders always include it, readers tolerate its absence.
+    val primary: EntityAction? = null,
     val secondary: List<EntityAction> = emptyList(),
 )
 

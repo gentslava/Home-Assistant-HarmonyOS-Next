@@ -48,13 +48,16 @@ home-assistant.io. Don't invent fields — what's here is verified; gaps are fla
 - Numeric params may be sent as strings (HA's own WS example uses `"brightness": "101"`) — so our
   `EntityAction.data: Record<string,string>` is compatible as-is.
 
-## MVP domains
+## Supported domains
 
 | Domain | States | Services |
 |--------|--------|----------|
 | `light` | `on` / `off` / `unavailable` / `unknown` | `turn_on` (brightness 1..255, brightness_pct 0..100, rgb_color, color_temp_kelvin, transition), `turn_off`, `toggle` |
 | `switch` | `on` / `off` / `unavailable` / `unknown` | `turn_on`, `turn_off`, `toggle` (only param: entity_id) |
 | `lock` | `locked` / `unlocked` / `locking` / `unlocking` / `jammed` / `open` / `unavailable` / `unknown` | `lock`, `unlock`, `open` (unlatch; only if supported; optional `code`) |
+| `cover` | `open` / `closed` / `opening` / `closing` / `unavailable` | `open_cover`, `close_cover`, `stop_cover` (Phase 4: no position slider; `current_position` not used) |
+| `scene` | a last-activated timestamp (treated as stateless) | `turn_on` (activate) |
+| `sensor` | a numeric/text value (read-only) | none — no service call |
 
 `light.turn_on`: **don't** send `brightness` and `brightness_pct` together. HA silently ignores
 params the device doesn't support.
@@ -75,6 +78,9 @@ Build `primary` per domain (all `kind:'SERVICE'`, `data` ≥ `{ entity_id }`):
 - **light:** `toggle`; optional secondary `turn_on` with `brightness_pct`.
 - **switch:** `toggle`.
 - **lock:** state-dependent — `locked` → `unlock`, `unlocked` → `lock`; secondary `open` if supported.
+- **cover:** state-dependent — `open` → `close_cover`, `closed` → `open_cover`, `opening`/`closing` → `stop_cover`; secondary = all three (`open_cover`/`close_cover`/`stop_cover`).
+- **scene:** `turn_on` ("Activate"); no secondary. `state` is masked to the token `"scene"` (HA's raw state is a timestamp).
+- **sensor:** **no `primary`** (read-only) — omit it; fold `attributes.unit_of_measurement` into `state` (`"21.5 °C"`); no secondary.
 
 `CALL_SERVICE` → REST is a direct pass-through (no transform):
 ```

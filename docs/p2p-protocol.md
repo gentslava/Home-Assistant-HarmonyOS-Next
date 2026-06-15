@@ -107,14 +107,19 @@ than crashing.
 ```ts
 interface EntityCard {
   entity_id: string;          // e.g. "light.kitchen"
-  domain: string;             // "light" | "switch" | "lock" (MVP)
+  domain: string;             // "light"|"switch"|"lock"|"cover"|"scene"|"sensor"
   name: string;               // display name (companion may localize)
-  state: string;              // "on"/"off", "locked"/"unlocked", …
+  state: string;              // "on"/"off", "locked"/"unlocked", "21.5 °C", …
   icon?: string;              // optional icon hint
-  primary: EntityAction;      // main tap action
+  primary?: EntityAction;     // main tap action; OMITTED for read-only cards (sensor)
   secondary: EntityAction[];  // extra actions in the details screen
 }
 ```
+
+`primary` is optional and additive (no `v` bump): senders that always include it stay valid, and
+readers must tolerate its absence — a card without `primary` renders no main action tile (e.g. a
+read-only `sensor`). For `sensor`, the companion folds the unit into `state` (`"21.5 °C"`); for
+`scene`, `state` is a stable token (`"scene"`), not HA's last-activated timestamp.
 
 ### `EntityAction`
 A self-describing HA service call. The watch renders `label` and, on tap, sends `domain` +
