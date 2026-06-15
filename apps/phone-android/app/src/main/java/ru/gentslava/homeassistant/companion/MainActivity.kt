@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,9 +47,8 @@ import ru.gentslava.homeassistant.companion.ha.HaClient
 import ru.gentslava.homeassistant.companion.ha.HaConfig
 import ru.gentslava.homeassistant.companion.p2p.EntityCard
 import ru.gentslava.homeassistant.companion.p2p.WearEngineP2pService
-import ru.gentslava.homeassistant.companion.ui.HaCard
 import ru.gentslava.homeassistant.companion.ui.HaColorScheme
-import ru.gentslava.homeassistant.companion.ui.HaSecondaryText
+import ru.gentslava.homeassistant.companion.ui.HaLightColorScheme
 import ru.gentslava.homeassistant.companion.ui.entityAccent
 import ru.gentslava.homeassistant.companion.ui.entityGlyph
 
@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
         if (config.isConfigured) p2p.start()
 
         setContent {
-            MaterialTheme(colorScheme = HaColorScheme) {
+            MaterialTheme(colorScheme = if (isSystemInDarkTheme()) HaColorScheme else HaLightColorScheme) {
                 Surface(Modifier.fillMaxSize()) { CompanionScreen(config, client) }
             }
         }
@@ -92,7 +92,7 @@ private fun CompanionScreen(config: HaConfig, client: HaClient) {
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary,
         )
-        Text("Companion", style = MaterialTheme.typography.bodyMedium, color = HaSecondaryText)
+        Text("Companion", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.height(16.dp))
 
         OutlinedTextField(
@@ -138,7 +138,7 @@ private fun CompanionScreen(config: HaConfig, client: HaClient) {
         ) { Text("Connect & test") }
 
         Spacer(Modifier.height(8.dp))
-        Text(status, style = MaterialTheme.typography.bodyMedium, color = HaSecondaryText)
+        Text(status, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.height(8.dp))
 
         LazyColumn(
@@ -155,7 +155,7 @@ private fun CompanionScreen(config: HaConfig, client: HaClient) {
 private fun EntityRow(card: EntityCard) {
     val accent = entityAccent(card.domain, card.state)
     Card(
-        colors = CardDefaults.cardColors(containerColor = HaCard),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(

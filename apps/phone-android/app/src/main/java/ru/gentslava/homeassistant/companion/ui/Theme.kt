@@ -1,6 +1,7 @@
 package ru.gentslava.homeassistant.companion.ui
 
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
 // Home Assistant brand palette (dark). Primary is HA blue (#03A9F4).
@@ -29,6 +30,26 @@ val HaColorScheme = darkColorScheme(
     surfaceVariant = HaCard,
     onSurfaceVariant = HaSecondaryText,
     outline = Color(0xFF3A3A3A),
+)
+
+// Light theme (HA frontend light)
+val HaLightBackground = Color(0xFFFAFAFA)
+val HaLightSurface = Color(0xFFFFFFFF)
+val HaLightCard = Color(0xFFF2F2F2)
+val HaLightOnSurface = Color(0xFF212121)
+val HaLightSecondaryText = Color(0xFF6E6E6E)
+
+val HaLightColorScheme = lightColorScheme(
+    primary = HaBlue,
+    onPrimary = Color.White,
+    secondary = HaBlueDeep,
+    background = HaLightBackground,
+    onBackground = HaLightOnSurface,
+    surface = HaLightSurface,
+    onSurface = HaLightOnSurface,
+    surfaceVariant = HaLightCard,
+    onSurfaceVariant = HaLightSecondaryText,
+    outline = Color(0xFFE0E0E0),
 )
 
 /** Accent color for an entity given its domain + state (matches the watch palette). */
