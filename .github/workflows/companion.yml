@@ -1,0 +1,39 @@
+name: companion
+
+# Guards the shared P2P contract: the companion is the only app with a headless
+# test suite, so it runs on every push/PR that touches it. The watch apps have no
+# CI-runnable build (DevEco/JerryScript, device-only) — see their AGENTS.md.
+on:
+  push:
+    paths:
+      - 'apps/phone-android/**'
+      - 'docs/p2p-protocol.md'
+      - '.github/workflows/companion.yml'
+  pull_request:
+    paths:
+      - 'apps/phone-android/**'
+      - 'docs/p2p-protocol.md'
+      - '.github/workflows/companion.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/phone-android
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Unit tests
+        run: ./gradlew test --no-daemon
+
+      - name: Assemble debug APK
+        run: ./gradlew assembleDebug --no-daemon
