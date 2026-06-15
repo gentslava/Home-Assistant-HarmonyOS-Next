@@ -2,7 +2,6 @@ import router from '@ohos.router';
 import { AppStorageV2 } from '@ohos.arkui.StateManagement';
 import {
   ArcList, ArcListItem,
-  ArcListAttribute,
   ComponentContent, LengthMetrics
 } from '@kit.ArkUI';
 

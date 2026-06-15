@@ -36,9 +36,15 @@ export default {
         this.loadEntities();
     },
 
-    // On Lite this fires when returning via replace/back — re-apply optimistic states.
+    // On Lite this fires when returning via replace/back. If the first load failed (offline),
+    // retry it on return — otherwise the list stays empty until a manual pull-down. Else just
+    // re-apply optimistic states.
     onShow() {
-        this._applyStoreStates();
+        if (!this.items || this.items.length === 0) {
+            this.loadEntities();
+        } else {
+            this._applyStoreStates();
+        }
     },
 
     loadEntities() {
