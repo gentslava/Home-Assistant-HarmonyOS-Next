@@ -24,9 +24,10 @@ The watch has **no direct network access to Home Assistant**. It talks to an And
 └──────────────────────────┘                      └────────────────────┘              └────────────────┘
 ```
 
-The companion app lives in a **separate repository** and is not written yet. The P2P
-message protocol is therefore a forward-looking **contract** that both sides must honor —
-treat [p2p-protocol.md](p2p-protocol.md) as the source of truth when building either side.
+The companion app lives in this monorepo at [`apps/phone-android/`](../apps/phone-android/)
+(Kotlin + Compose; HA REST client, transport-agnostic bridge, Wear Engine P2P service, JUnit
+tests). The P2P message protocol is the **contract** both sides honor — treat
+[p2p-protocol.md](p2p-protocol.md) as the source of truth when building either side.
 
 ## Layers (Clean Architecture)
 
@@ -128,8 +129,9 @@ no clipped text or buttons at the top/bottom arcs.
 
 ## Extension points (where future work plugs in)
 
-- **New HA domain** (`light`/`switch`/`lock` today): UI mapping (icon/color/labels) + DTO/actions
-  + companion REST + mock entities. Walkthrough in [CONTRIBUTING.md](../CONTRIBUTING.md).
+- **New HA domain** (`light`/`switch`/`lock`/`cover`/`scene`/`sensor` today): UI mapping
+  (icon/color/labels) + DTO/actions + companion REST + mock entities. Walkthrough in
+  [CONTRIBUTING.md](../CONTRIBUTING.md).
 - **Remote access** (cloud / external URL + TLS): a new `HomeAssistantRepository` implementation
   in `data/`, selected in `Services`. The UI and domain stay untouched.
 - **On-watch connection config**: currently the companion owns base URL + token; a settings UI

@@ -17,10 +17,10 @@ sync with them; if they diverge, the `.ets` files win and this doc is a bug.
 - **Channel:** Wear Engine P2P messaging (`@kit.WearEngine`).
 - **Encoding:** each message is a single UTF-8 JSON string (one JSON object per P2P message).
 - **Peer pairing:** the watch resolves the first connected device and targets the companion by
-  `remoteApp = { bundleName, fingerprint }`. ⚠️ These are configured via
-  `WearEngineP2pClient.setRemoteApp(...)` and are **currently commented out** in
-  [`Services.ets`](../apps/watch-arkts/entry/src/main/ets/app/Services.ets) — real-device P2P will not connect
-  until the companion's bundleName + signing fingerprint are filled in.
+  `remoteApp = { bundleName, fingerprint }`, configured via `WearEngineP2pClient.setRemoteApp(...)`
+  in [`Services.ets`](../apps/watch-arkts/entry/src/main/ets/app/Services.ets). It is **configured**
+  with the real companion bundle (`ru.gentslava.homeassistant.companion`) + its debug-cert
+  fingerprint; real-device P2P additionally needs Wear Engine approved in AppGallery Connect.
 - **Direction:** the watch is always the initiator. The companion only sends replies (it never
   pushes unsolicited messages in v1).
 
