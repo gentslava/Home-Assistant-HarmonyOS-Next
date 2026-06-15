@@ -11,8 +11,10 @@ import { HomeAssistantRepository } from '../domain/repository/HomeAssistantRepos
 
 export class Services {
   static repo: HomeAssistantRepository | null = null;
+  private static ctx: common.UIAbilityContext | null = null;
 
   static async initWithFallback(ctx: common.UIAbilityContext): Promise<void> {
+    Services.ctx = ctx;
     // Не даём инициализации повиснуть на эмуляторе
     // const repo: HomeAssistantRepository = new MockHomeAssistantRepository();
     const repo: HomeAssistantRepository = await Services.tryInitRealRepo(ctx, 1200)
@@ -24,6 +26,23 @@ export class Services {
     const store: HomeAssistantStore =
       AppStorageV2.connect(HomeAssistantStore, AppKeys.STORE_KEY, () => new HomeAssistantStore())!;
     await store.sync();
+  }
+
+  /**
+   * If we're currently on the Mock repo (real P2P wasn't available at startup), try to (re)connect
+   * the real repo. Returns true if it upgraded. This is what stops the app from being stuck on Mock
+   * fake data forever once the phone/companion becomes reachable — called before each sync.
+   */
+  static async tryUpgradeToReal(): Promise<boolean> {
+    if (!(Services.repo instanceof MockHomeAssistantRepository)) return false;
+    if (!Services.ctx) return false;
+    const real: HomeAssistantRepository | null =
+      await Services.tryInitRealRepo(Services.ctx, 1200).catch(() => null);
+    if (real) {
+      Services.repo = real;
+      return true;
+    }
+    return false;
   }
 
   private static async tryInitRealRepo(ctx: common.UIAbilityContext, timeoutMs: number): Promise<HomeAssistantRepository> {

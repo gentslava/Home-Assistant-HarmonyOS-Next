@@ -80,8 +80,18 @@ export class P2pHomeAssistantRepository implements HomeAssistantRepository {
   }
 
   private onIncoming(payload: string): void {
-    const msg: AnyMsg = fromJson<AnyMsg>(payload);
+    // The companion is a separate app — a malformed/non-JSON payload must not throw out of this
+    // Wear Engine callback (it would break further receiving). Ignore it; the matching request
+    // times out on its own.
+    let msg: AnyMsg;
+    try {
+      msg = fromJson<AnyMsg>(payload);
+    } catch (e) {
+      return;
+    }
+
     const id: string = msg.id;
+    if (!id) return;
 
     const p: PendingMsg | undefined = this.pending.get(id);
     if (!p) return;
