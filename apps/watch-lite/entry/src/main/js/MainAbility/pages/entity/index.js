@@ -74,6 +74,8 @@ export default {
     _rebuildActions() {
         const ICON_POWER = '/common/icons/power.png';
         const ICON_LOCK = '/common/icons/lock.png';
+        const ICON_COVER = '/common/icons/cover.png';
+        const ICON_SCENE = '/common/icons/scene.png';
         const st = String(this.state || '');
 
         if (this.domain === 'light' || this.domain === 'switch') {
@@ -108,6 +110,39 @@ export default {
             return;
         }
 
+        if (this.domain === 'cover') {
+            if (st === 'open') {
+                this.actions = [{ id: 'close_cover', name: 'Close', state: 'Change state', iconSrc: ICON_COVER, color: actionColorBlue() }];
+                return;
+            }
+            if (st === 'closed') {
+                this.actions = [{ id: 'open_cover', name: 'Open', state: 'Change state', iconSrc: ICON_COVER, color: actionColorGreen() }];
+                return;
+            }
+            if (st === 'opening' || st === 'closing') {
+                this.actions = [{ id: 'stop_cover', name: 'Stop', state: 'Change state', iconSrc: ICON_COVER, color: actionColorRed() }];
+                return;
+            }
+            this.actions = [
+                { id: 'open_cover', name: 'Open', state: 'Change state', iconSrc: ICON_COVER, color: actionColorGreen() },
+                { id: 'close_cover', name: 'Close', state: 'Change state', iconSrc: ICON_COVER, color: actionColorBlue() },
+                { id: 'stop_cover', name: 'Stop', state: 'Change state', iconSrc: ICON_COVER, color: actionColorRed() }
+            ];
+            return;
+        }
+
+        if (this.domain === 'scene') {
+            this.actions = [{ id: 'turn_on', name: 'Activate', state: 'Activate scene', iconSrc: ICON_SCENE, color: actionColorGreen() }];
+            return;
+        }
+
+        if (this.domain === 'sensor') {
+            // Read-only: no actions, just the state header.
+            this.actions = [];
+            this.statusText = 'Read-only';
+            return;
+        }
+
         this.actions = [{ id: 'toggle', name: 'Toggle', state: 'Call service', iconSrc: ICON_POWER, color: actionColorGray() }];
     },
 
@@ -129,7 +164,12 @@ export default {
         } else if (this.domain === 'lock') {
             if (service === 'lock') nextState = 'locked';
             if (service === 'unlock') nextState = 'unlocked';
+        } else if (this.domain === 'cover') {
+            if (service === 'open_cover') nextState = 'open';
+            if (service === 'close_cover') nextState = 'closed';
+            // stop_cover: leave state as-is
         }
+        // scene: turn_on has no persistent state to flip (keep the "scene" token)
         this._setState(nextState);
 
         // 2) call HA via the companion; confirm or roll back

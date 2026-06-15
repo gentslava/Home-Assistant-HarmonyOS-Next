@@ -63,6 +63,15 @@ struct Index {
       if (domain === 'switch') {
         return '🎚️';
       }
+      if (domain === 'cover') {
+        return '🪟';
+      }
+      if (domain === 'scene') {
+        return '🎬';
+      }
+      if (domain === 'sensor') {
+        return '📊';
+      }
       return domain.substring(0, 1).toUpperCase();
     } else return '?';
   }
@@ -91,6 +100,15 @@ struct Index {
     }
     if (domain === 'switch') {
       return 0xFF27AE60; // зелёный
+    }
+    if (domain === 'cover') {
+      return 0xFF2D9CDB; // синий
+    }
+    if (domain === 'scene') {
+      return 0xFFBB6BD9; // сиреневый
+    }
+    if (domain === 'sensor') {
+      return 0xFF56CCF2; // голубой
     }
     return 0xFF4A4A4A; // дефолт/unknown
   }

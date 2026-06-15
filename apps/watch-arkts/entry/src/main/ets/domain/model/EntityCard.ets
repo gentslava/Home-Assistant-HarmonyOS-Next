@@ -15,6 +15,7 @@ export interface EntityCard {
   name: string;
   state: string;
   icon?: string;
-  primary: EntityAction;
+  // Omitted for read-only cards (e.g. sensor) — the details screen renders no primary tile.
+  primary?: EntityAction;
   secondary: EntityAction[];
 }

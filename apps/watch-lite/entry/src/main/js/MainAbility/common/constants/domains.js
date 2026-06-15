@@ -6,7 +6,10 @@
 var MAP = {
     light:  { icon: '/common/icons/light.png',  color: '#F2C94C' },
     switch: { icon: '/common/icons/switch.png', color: '#27AE60' },
-    lock:   { icon: '/common/icons/lock.png',   color: '#8E44AD' }
+    lock:   { icon: '/common/icons/lock.png',   color: '#8E44AD' },
+    cover:  { icon: '/common/icons/cover.png',  color: '#2D9CDB' },
+    scene:  { icon: '/common/icons/scene.png',  color: '#BB6BD9' },
+    sensor: { icon: '/common/icons/sensor.png', color: '#56CCF2' }
 };
 
 export function uiFor(domain) {

@@ -17,7 +17,10 @@ function mockItems() {
     return [
         { id: 'light.kitchen', name: 'Kitchen', state: 'off', domain: 'light', iconSrc: '/common/icons/light.png', color: '#F2C94C', primary: null, secondary: [] },
         { id: 'switch.router', name: 'Router', state: 'on', domain: 'switch', iconSrc: '/common/icons/switch.png', color: '#27AE60', primary: null, secondary: [] },
-        { id: 'lock.front_door', name: 'Front door', state: 'locked', domain: 'lock', iconSrc: '/common/icons/lock.png', color: '#8E44AD', primary: null, secondary: [] }
+        { id: 'lock.front_door', name: 'Front door', state: 'locked', domain: 'lock', iconSrc: '/common/icons/lock.png', color: '#8E44AD', primary: null, secondary: [] },
+        { id: 'cover.garage', name: 'Garage', state: 'closed', domain: 'cover', iconSrc: '/common/icons/cover.png', color: '#2D9CDB', primary: null, secondary: [] },
+        { id: 'scene.movie', name: 'Movie', state: 'scene', domain: 'scene', iconSrc: '/common/icons/scene.png', color: '#BB6BD9', primary: null, secondary: [] },
+        { id: 'sensor.temperature', name: 'Temperature', state: '21 °C', domain: 'sensor', iconSrc: '/common/icons/sensor.png', color: '#56CCF2', primary: null, secondary: [] }
     ];
 }
 

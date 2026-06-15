@@ -30,6 +30,9 @@ export class MockHomeAssistantRepository implements HomeAssistantRepository {
       } else if (card.domain === 'light' || card.domain === 'switch') {
         const next: string = (card.state === 'on') ? 'off' : 'on';
         this.entities[idx] = this.withState(card, next);
+      } else if (card.domain === 'cover') {
+        const nextCover: string = (card.state === 'open') ? 'closed' : 'open';
+        this.entities[idx] = this.withState(card, nextCover);
       }
     }
 
@@ -56,6 +59,17 @@ export class MockHomeAssistantRepository implements HomeAssistantRepository {
       this.entities[idx] = this.withState(card, nextLock);
       return;
     }
+
+    if (card.domain === 'cover') {
+      let next: string = card.state;
+      if (action.service === 'open_cover') next = 'open';
+      else if (action.service === 'close_cover') next = 'closed';
+      // stop_cover: leave state as-is
+      this.entities[idx] = this.withState(card, next);
+      return;
+    }
+
+    // scene (turn_on) has no persistent state to flip; sensor is read-only — nothing to do.
   }
 
   // ===== generators =====
@@ -66,6 +80,7 @@ export class MockHomeAssistantRepository implements HomeAssistantRepository {
     const lightsCount: number = this.randomIntInclusive(1, 2);
     const locksCount: number = this.randomIntInclusive(1, 2);
     const switchesCount: number = this.randomIntInclusive(1, 2);
+    const coversCount: number = this.randomIntInclusive(1, 2);
 
     let i: number = 1;
 
@@ -81,6 +96,14 @@ export class MockHomeAssistantRepository implements HomeAssistantRepository {
       out.push(this.makeSwitch(i));
       i++;
     }
+    for (let n: number = 0; n < coversCount; n++) {
+      out.push(this.makeCover(i));
+      i++;
+    }
+    out.push(this.makeScene(i));
+    i++;
+    out.push(this.makeSensor(i));
+    i++;
 
     return out;
   }
@@ -89,16 +112,11 @@ export class MockHomeAssistantRepository implements HomeAssistantRepository {
     const id: string = this.uuid();
     const state: string = this.randomBool() ? 'on' : 'off';
 
-    const primary: EntityAction = this.makeServiceAction(
-      'light',
-      'toggle',
-      state === 'on' ? 'app.string.Entity_light_disable_label' : 'app.string.Entity_light_enable_label',
-      id
-    );
+    const primary: EntityAction = this.makeServiceAction('light', 'toggle', 'Toggle', id);
 
     const secondary: EntityAction[] = [];
-    secondary.push(this.makeServiceAction('light', 'turn_on', 'Turn on', id));
-    secondary.push(this.makeServiceAction('light', 'turn_off', 'Turn off', id));
+    secondary.push(this.makeServiceAction('light', 'turn_on', 'On', id));
+    secondary.push(this.makeServiceAction('light', 'turn_off', 'Off', id));
 
     const card: EntityCard = {
       entity_id: id,
@@ -116,12 +134,9 @@ export class MockHomeAssistantRepository implements HomeAssistantRepository {
     const id: string = this.uuid();
     const state: string = this.randomBool() ? 'locked' : 'unlocked';
 
-    const primary: EntityAction = this.makeServiceAction(
-      'lock',
-      'toggle',
-      state === 'locked' ? 'app.string.Entity_lock_disable_label' : 'app.string.Entity_lock_enable_label',
-      id
-    );
+    const primary: EntityAction = state === 'locked'
+      ? this.makeServiceAction('lock', 'unlock', 'Unlock', id)
+      : this.makeServiceAction('lock', 'lock', 'Lock', id);
 
     const secondary: EntityAction[] = [];
     secondary.push(this.makeServiceAction('lock', 'lock', 'Lock', id));
@@ -143,16 +158,11 @@ export class MockHomeAssistantRepository implements HomeAssistantRepository {
     const id: string = this.uuid();
     const state: string = this.randomBool() ? 'on' : 'off';
 
-    const primary: EntityAction = this.makeServiceAction(
-      'switch',
-      'toggle',
-      state === 'on' ? 'app.string.Entity_switch_disable_label' : 'app.string.Entity_switch_enable_label',
-      id
-    );
+    const primary: EntityAction = this.makeServiceAction('switch', 'toggle', 'Toggle', id);
 
     const secondary: EntityAction[] = [];
-    secondary.push(this.makeServiceAction('switch', 'turn_on', 'Turn on', id));
-    secondary.push(this.makeServiceAction('switch', 'turn_off', 'Turn off', id));
+    secondary.push(this.makeServiceAction('switch', 'turn_on', 'On', id));
+    secondary.push(this.makeServiceAction('switch', 'turn_off', 'Off', id));
 
     const card: EntityCard = {
       entity_id: id,
@@ -164,6 +174,59 @@ export class MockHomeAssistantRepository implements HomeAssistantRepository {
     };
 
     return card;
+  }
+
+  private makeCover(i: number): EntityCard {
+    const id: string = this.uuid();
+    const state: string = this.randomBool() ? 'open' : 'closed';
+
+    const card: EntityCard = {
+      entity_id: id,
+      name: `Cover ${i}`,
+      domain: 'cover',
+      state: state,
+      primary: this.coverPrimary(id, state),
+      secondary: [
+        this.makeServiceAction('cover', 'open_cover', 'Open', id),
+        this.makeServiceAction('cover', 'close_cover', 'Close', id),
+        this.makeServiceAction('cover', 'stop_cover', 'Stop', id),
+      ]
+    };
+
+    return card;
+  }
+
+  private makeScene(i: number): EntityCard {
+    const id: string = this.uuid();
+    const card: EntityCard = {
+      entity_id: id,
+      name: `Scene ${i}`,
+      domain: 'scene',
+      state: 'scene',
+      primary: this.makeServiceAction('scene', 'turn_on', 'Activate', id),
+      secondary: []
+    };
+    return card;
+  }
+
+  private makeSensor(i: number): EntityCard {
+    const id: string = this.uuid();
+    const value: number = this.randomIntInclusive(18, 26);
+    // Read-only: no primary action; unit folded into state (like the companion does).
+    const card: EntityCard = {
+      entity_id: id,
+      name: `Sensor ${i}`,
+      domain: 'sensor',
+      state: `${value} °C`,
+      secondary: []
+    };
+    return card;
+  }
+
+  private coverPrimary(id: string, state: string): EntityAction {
+    if (state === 'open') return this.makeServiceAction('cover', 'close_cover', 'Close', id);
+    if (state === 'closed') return this.makeServiceAction('cover', 'open_cover', 'Open', id);
+    return this.makeServiceAction('cover', 'stop_cover', 'Stop', id);
   }
 
   private withState(card: EntityCard, newState: string): EntityCard {
@@ -180,19 +243,15 @@ export class MockHomeAssistantRepository implements HomeAssistantRepository {
 
   private rebuildPrimary(domain: string, entityId: string, state: string): EntityAction {
     if (domain === 'lock') {
-      return this.makeServiceAction(
-        'lock',
-        'toggle',
-        state === 'locked' ? 'Unlock' : 'Lock',
-        entityId
-      );
+      return state === 'locked'
+        ? this.makeServiceAction('lock', 'unlock', 'Unlock', entityId)
+        : this.makeServiceAction('lock', 'lock', 'Lock', entityId);
     }
-    return this.makeServiceAction(
-      domain,
-      'toggle',
-      state === 'on' ? 'Turn off' : 'Turn on',
-      entityId
-    );
+    if (domain === 'cover') {
+      return this.coverPrimary(entityId, state);
+    }
+    // light / switch
+    return this.makeServiceAction(domain, 'toggle', 'Toggle', entityId);
   }
 
   private makeServiceAction(domain: string, service: string, label: string, entityId: string): EntityAction {
