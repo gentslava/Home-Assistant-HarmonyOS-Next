@@ -9,9 +9,11 @@
     <uses-permission android:name="com.huawei.wearengine.permission.DEVICE_MANAGER" />
     <uses-permission android:name="com.huawei.wearengine.permission.NOTIFY" />
 
-    <!-- Foreground service: keep the watch bridge alive across Activity recreation / background -->
+    <!-- Foreground service: keep the watch bridge alive across Activity recreation / background.
+         Type dataSync (syncing HA state <-> watch) needs only this normal permission; the
+         connectedDevice type would additionally require a BT/network runtime permission. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!-- Android 11+ package visibility: the Wear Engine SDK binds to the Huawei Health /
@@ -49,7 +51,7 @@
         <service
             android:name=".p2p.HaBridgeService"
             android:exported="false"
-            android:foregroundServiceType="connectedDevice" />
+            android:foregroundServiceType="dataSync" />
     </application>
 
 </manifest>

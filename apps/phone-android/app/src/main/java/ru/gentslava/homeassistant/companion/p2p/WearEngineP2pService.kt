@@ -51,6 +51,10 @@ class WearEngineP2pService(
     @Volatile
     private var running = false
 
+    // Backoff for the reconnect loop so a watch that's away doesn't cause 5s CPU wakeups forever.
+    @Volatile
+    private var retryDelayMs = RETRY_MIN_MS
+
     private val receiver = Receiver { message: Message ->
         if (message.type != Message.MESSAGE_TYPE_DATA) return@Receiver
         val request = String(message.data, StandardCharsets.UTF_8)
@@ -96,7 +100,7 @@ class WearEngineP2pService(
             .addOnSuccessListener { devices ->
                 val connected = devices.firstOrNull { it.isConnected }
                 if (connected == null) {
-                    Log.w(TAG, "no connected watch; retry in ${RETRY_MS}ms")
+                    Log.w(TAG, "no connected watch; retry in ${retryDelayMs}ms")
                     device = null
                     registered = false
                     scheduleRetry()
@@ -107,6 +111,7 @@ class WearEngineP2pService(
                     p2pClient.registerReceiver(connected, receiver)
                         .addOnSuccessListener {
                             registered = true
+                            retryDelayMs = RETRY_MIN_MS // connected — reset backoff
                             Log.i(TAG, "P2P receiver registered on ${connected.name}")
                         }
                         .addOnFailureListener {
@@ -124,8 +129,10 @@ class WearEngineP2pService(
 
     private fun scheduleRetry() {
         if (!running) return
+        val d = retryDelayMs
+        retryDelayMs = (retryDelayMs * 2).coerceAtMost(RETRY_MAX_MS) // exponential backoff
         scope.launch {
-            delay(RETRY_MS)
+            delay(d)
             ensureRegistered()
         }
     }
@@ -151,7 +158,8 @@ class WearEngineP2pService(
     private companion object {
         const val TAG = "WearEngineP2p"
         const val SEND_SUCCESS = 207
-        const val RETRY_MS = 5_000L // re-resolve the watch / re-register on this cadence
+        const val RETRY_MIN_MS = 5_000L  // first reconnect attempt delay
+        const val RETRY_MAX_MS = 60_000L // backoff ceiling — at most one wakeup per minute when away
 
         // The watch app this companion pairs with. bundleName is fixed; fingerprint must match the
         // watch app's signing cert — fill it in (see README, Phase 1e).
