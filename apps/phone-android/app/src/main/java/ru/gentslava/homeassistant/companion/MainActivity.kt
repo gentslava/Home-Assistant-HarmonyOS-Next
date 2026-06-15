@@ -36,17 +36,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import ru.gentslava.homeassistant.companion.bridge.EntityMapper
-import ru.gentslava.homeassistant.companion.bridge.HaBridge
 import ru.gentslava.homeassistant.companion.ha.HaClient
 import ru.gentslava.homeassistant.companion.ha.HaConfig
 import ru.gentslava.homeassistant.companion.p2p.EntityCard
-import ru.gentslava.homeassistant.companion.p2p.WearEngineP2pService
+import ru.gentslava.homeassistant.companion.p2p.HaBridgeService
 import ru.gentslava.homeassistant.companion.ui.HaColorScheme
 import ru.gentslava.homeassistant.companion.ui.HaLightColorScheme
 import ru.gentslava.homeassistant.companion.ui.entityAccent
@@ -54,14 +54,15 @@ import ru.gentslava.homeassistant.companion.ui.entityGlyph
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         val config = HaConfig(this)
         val client = HaClient(config)
 
-        // Start the watch transport so a paired watch can reach HA through this companion.
-        val p2p = WearEngineP2pService(this, HaBridge(client))
-        if (config.isConfigured) p2p.start()
+        // The watch bridge runs in a foreground service so it survives Activity recreation and
+        // keeps working in the background. Start it once HA is already configured; first-time
+        // setup starts it from "Connect & test" (see CompanionScreen).
+        if (config.isConfigured) HaBridgeService.start(this)
 
         setContent {
             MaterialTheme(colorScheme = if (isSystemInDarkTheme()) HaColorScheme else HaLightColorScheme) {
@@ -78,6 +79,7 @@ private fun CompanionScreen(config: HaConfig, client: HaClient) {
     var status by remember { mutableStateOf(if (config.isConfigured) "Configured" else "Not configured") }
     var cards by remember { mutableStateOf<List<EntityCard>>(emptyList()) }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Column(
         Modifier
@@ -126,6 +128,8 @@ private fun CompanionScreen(config: HaConfig, client: HaClient) {
                                 onSuccess = { states ->
                                     cards = EntityMapper.cards(states)
                                     status = "Connected — ${cards.size} entities"
+                                    // First-time setup: bring the watch bridge up now (K4).
+                                    HaBridgeService.start(context)
                                 },
                                 onFailure = { status = "States error: ${it.message}" },
                             )
