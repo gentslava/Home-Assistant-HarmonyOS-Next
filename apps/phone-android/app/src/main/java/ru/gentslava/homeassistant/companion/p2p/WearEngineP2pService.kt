@@ -105,6 +105,6 @@ class WearEngineP2pService(
         // The watch app this companion pairs with. bundleName is fixed; fingerprint must match the
         // watch app's signing cert — fill it in (see README, Phase 1e).
         const val PEER_PKG = "ru.gentslava.homeassistant"
-        const val PEER_FINGERPRINT = "PUT_WATCH_APP_FINGERPRINT_HERE"
+        const val PEER_FINGERPRINT = "DF21A3C09F7954579305F85C64F80CAD86F79853EE3A887C1DEC95D218DF3A37"
     }
 }
