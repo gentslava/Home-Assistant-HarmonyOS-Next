@@ -1,7 +1,7 @@
 package ru.gentslava.homeassistant.companion.bridge
 
 import kotlinx.serialization.encodeToString
-import ru.gentslava.homeassistant.companion.ha.HaClient
+import ru.gentslava.homeassistant.companion.ha.HaService
 import ru.gentslava.homeassistant.companion.p2p.Ack
 import ru.gentslava.homeassistant.companion.p2p.CallServiceRequest
 import ru.gentslava.homeassistant.companion.p2p.P2pJson
@@ -17,7 +17,7 @@ import ru.gentslava.homeassistant.companion.p2p.parseIncoming
  * reply to send back. Transport-agnostic: in/out are JSON strings, so it is unit-testable without
  * Wear Engine. Reply `id` always echoes the request `id` (P2P correlation, see docs/p2p-protocol.md).
  */
-class HaBridge(private val client: HaClient) {
+class HaBridge(private val client: HaService) {
 
     /** Handle a raw inbound message; returns the JSON reply, or null if unrecognized. */
     suspend fun handle(rawJson: String): String? = when (val msg = parseIncoming(rawJson)) {

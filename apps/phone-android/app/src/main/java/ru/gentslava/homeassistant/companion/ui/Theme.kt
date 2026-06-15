@@ -52,18 +52,28 @@ val HaLightColorScheme = lightColorScheme(
     outline = Color(0xFFE0E0E0),
 )
 
+val HaCyan = Color(0xFF56CCF2)    // sensor
+val HaPurple = Color(0xFFBB6BD9)  // scene
+val HaSky = Color(0xFF2D9CDB)     // cover open
+
 /** Accent color for an entity given its domain + state (matches the watch palette). */
 fun entityAccent(domain: String, state: String): Color = when (domain) {
     "light" -> if (state == "on") HaAmber else HaInactive
     "switch" -> if (state == "on") HaGreen else HaInactive
     "lock" -> if (state == "locked") HaBlue else HaRed
+    "cover" -> if (state == "open") HaSky else HaInactive
+    "scene" -> HaPurple
+    "sensor" -> HaCyan
     else -> HaInactive
 }
 
 /** A short glyph for an entity domain. */
 fun entityGlyph(domain: String): String = when (domain) {
-    "light" -> "💡"   // 💡
-    "switch" -> "🔌"  // 🔌
-    "lock" -> "🔒"    // 🔒
+    "light" -> "💡"
+    "switch" -> "🔌"
+    "lock" -> "🔒"
+    "cover" -> "🪟"
+    "scene" -> "🎬"
+    "sensor" -> "📊"
     else -> "?"
 }

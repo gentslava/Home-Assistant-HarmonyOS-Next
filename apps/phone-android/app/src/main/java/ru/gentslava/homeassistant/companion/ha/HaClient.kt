@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
  * Home Assistant REST client (see docs/ha-integration-notes.md).
  * Auth via `Authorization: Bearer <token>`. All calls run on Dispatchers.IO and return Result.
  */
-class HaClient(private val config: HaConfig) {
+class HaClient(private val config: HaConfig) : HaService {
 
     private val http = OkHttpClient.Builder()
         .connectTimeout(CONNECT_TIMEOUT_S, TimeUnit.SECONDS)
@@ -29,14 +29,14 @@ class HaClient(private val config: HaConfig) {
     private val jsonMedia = "application/json".toMediaType()
 
     /** GET /api/ -> {"message":"API running."}. Validates host + token. */
-    suspend fun checkApi(): Result<Unit> = call("GET", "/api/").map { }
+    override suspend fun checkApi(): Result<Unit> = call("GET", "/api/").map { }
 
     /**
      * GET /api/states -> all entities. Parsed element-by-element: a single malformed state
      * object (some custom integration) is skipped rather than failing the whole sync — the
      * protocol prefers fast partial data over an all-or-nothing reply.
      */
-    suspend fun getStates(): Result<List<HaState>> =
+    override suspend fun getStates(): Result<List<HaState>> =
         call("GET", "/api/states").mapCatching { raw ->
             json.parseToJsonElement(raw).jsonArray.mapNotNull { el ->
                 runCatching { json.decodeFromJsonElement<HaState>(el) }.getOrNull()
@@ -44,13 +44,13 @@ class HaClient(private val config: HaConfig) {
         }
 
     /** GET /api/states/<entity_id> -> one entity, or null on 404. */
-    suspend fun getState(entityId: String): Result<HaState?> =
+    override suspend fun getState(entityId: String): Result<HaState?> =
         call("GET", "/api/states/$entityId")
             .mapCatching { json.decodeFromString<HaState>(it) }
             .recoverCatching { e -> if (e is NotFound) null else throw e }
 
     /** POST /api/services/<domain>/<service> with `data` as the flat body (see notes). */
-    suspend fun callService(domain: String, service: String, data: Map<String, String>): Result<Unit> {
+    override suspend fun callService(domain: String, service: String, data: Map<String, String>): Result<Unit> {
         val body = json.encodeToString(data)
         return call("POST", "/api/services/$domain/$service", body).map { }
     }
