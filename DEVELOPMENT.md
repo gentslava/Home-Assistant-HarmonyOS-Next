@@ -11,7 +11,8 @@ domain"). Operational facts live in [AGENTS.md](AGENTS.md); read that first.
 
 | Artifact | Purpose | When to read / update |
 |----------|---------|-----------------------|
-| [AGENTS.md](AGENTS.md) | Single source of truth: commands, layout, strict-ArkTS rules, gotchas | Every session; update when a fact changes |
+| [AGENTS.md](AGENTS.md) | Router: shared context + map to per-app rules | Every session |
+| `apps/<app>/AGENTS.md` | Platform-specific rules (ArkTS / lite-JS / Kotlin) | When editing that app |
 | [CLAUDE.md](CLAUDE.md) | Thin Claude Code layer; imports `AGENTS.md` | Claude-specific guidance only |
 | [docs/architecture.md](docs/architecture.md) | System map, layers, startup & data flow | Before cross-layer work |
 | [docs/p2p-protocol.md](docs/p2p-protocol.md) | Watch↔phone wire contract (companion = separate, unwritten repo) | Before touching messaging; update on any change |
@@ -27,11 +28,11 @@ change they describe. Stale instructions are worse than none — they actively m
    ADRs, and `docs/p2p-protocol.md` if messaging is involved. Don't edit yet. Skipping this builds a
    plan on assumptions.
 2. **Plan.** For anything beyond a one-line diff, produce a plan first — delegate to the
-   **`arkts-architect`** subagent for features, layer/contract changes, or a new HA domain. Surface
-   assumptions explicitly and get them confirmed. The human reviews the plan before code is written.
-3. **Code.** Implement the smallest correct slice. Keep within the layer boundaries (ADR-0001), keep
-   the Mock path working (ADR-0002), keep state on ArkUI V2 (ADR-0004). Write/adjust tests with the
-   **`test-writer`** subagent.
+   **`architect`** subagent for features, protocol/contract changes, or a new HA domain across apps.
+   Surface assumptions explicitly and get them confirmed. The human reviews the plan before code.
+3. **Code.** Implement the smallest correct slice, following the **per-app `AGENTS.md`** for that
+   platform (ArkTS layers/V2 · lite-JS ES5.1 · Kotlin). Keep the Mock path working. Write/adjust tests
+   with the **`test-writer`** subagent (hypium / JUnit / on-device).
 4. **Review & commit.** Run the **`code-reviewer`** subagent in a fresh context. Then commit with a
    Conventional Commit message, one focused change per PR.
 
@@ -41,21 +42,21 @@ The human owns decisions; agents own execution. Stop and get a human decision be
 
 - Reversing or adding an **ADR** (architecture, transport, protocol).
 - A **breaking P2P protocol change** (`v` bump) — it commits the future companion repo to a contract.
-- Filling in real secrets/identity: the `setRemoteApp(...)` bundleName/fingerprint, `client_id`,
-  `wearEngineRemoteAppNameList` (today they are intentional placeholders).
-- Adding a **production dependency** (the app is intentionally pure ArkTS).
+- Filling in real secrets/identity: `setRemoteApp(...)` / `PEER_FINGERPRINT` / `client_id` /
+  `supportLists` / `agconnect-services.json` (today intentional placeholders).
+- Adding a **production dependency** to a watch app (they are intentionally dependency-free).
 - Anything where the spec is ambiguous — the author prefers an extra question over a wrong inference.
 
 ## Verification (close the loop yourself)
 
 A task is **not done** until it is verified. State the evidence; never claim success without it.
 
-There is **no committed `hvigorw` and no CI** — verification is currently manual via DevEco Studio:
+There is **no committed CLI build / CI** yet — verification is per-app (details in each `AGENTS.md`):
 
-- **Runs on the emulator in Mock mode** (no clipped UI on the round screen).
-- **Code Linter reports no new ArkTS errors/warnings** (`code-linter.json5`).
-- **Relevant tests pass** (`entry/src/test` local unit; `entry/src/ohosTest` instrumented, under `apps/watch-arkts/`).
-- Sync/actions still work (or Mock still works).
+- **watch-arkts:** runs on the emulator in Mock mode (no round-screen clipping); Code Linter clean.
+- **watch-lite:** builds and installs via DevEco Assistant; runs on a real GT (no previewer for P2P).
+- **companion:** `./gradlew test` green; Connect & test lists real HA entities.
+- The Mock path still works in each watch app.
 
 If you cannot run a check in your environment, say so explicitly and hand the exact steps to the
 human — do not assert a check passed when you didn't run it.

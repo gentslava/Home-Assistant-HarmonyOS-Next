@@ -1,0 +1,22 @@
+# Normalize all text files to LF in the repo (working tree + index).
+* text=auto eol=lf
+
+# Windows-only scripts must keep CRLF.
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+
+# Binary assets — never normalize line endings.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.ico   binary
+*.webp  binary
+*.gif   binary
+*.har   binary
+*.hap   binary
+*.jar   binary
+*.so    binary
+*.keystore binary
+*.cer   binary
+*.p12   binary
+*.p7b   binary

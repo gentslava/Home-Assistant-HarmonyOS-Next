@@ -1,18 +1,16 @@
 import router from '@system.router';
 import getStore from '../../common/store.js';
+import { callAction, syncEntity } from '../../common/services/haRepository.js';
 
 function ensureStore() {
     const st = getStore();
-    if (!st.statesById) {
-        st.statesById = {};
-    }
+    if (!st.statesById) st.statesById = {};
     return st;
 }
 
 function safeNavEntity() {
     const nav = getStore().navEntity;
-    if (nav) return nav;
-    return {};
+    return nav || {};
 }
 
 function domainFromEntityId(entityId) {
@@ -34,7 +32,7 @@ export default {
         state: '—',
         iconSrc: '/common/icons/unknown.png',
         domain: '',
-
+        statusText: '',
         actions: [],
         busy: false
     },
@@ -48,7 +46,6 @@ export default {
         this.iconSrc = p.iconSrc ? String(p.iconSrc) : '/common/icons/unknown.png';
         this.domain = domainFromEntityId(this.entityId);
 
-        // Берём state из store, если есть
         const store = ensureStore();
         const saved = store.statesById[this.entityId];
         this.state = saved !== undefined ? saved : (p.state ? String(p.state) : '—');
@@ -58,21 +55,20 @@ export default {
 
     onSwipe(e) {
         if (!e || !e.direction) return;
-
-        if (e.direction === 'right') {
-            router.replace({ uri: 'pages/index/index' });
-            return;
-        }
-
-        if (e.direction === 'down') {
-            this.refresh();
-            return;
-        }
+        if (e.direction === 'right') { router.replace({ uri: 'pages/index/index' }); return; }
+        if (e.direction === 'down') { this.refresh(); return; }
     },
 
+    // Pull the real current state for this entity from HA (via the companion).
     refresh() {
-        // TODO: P2P -> phone -> HA -> state
-        console.log('refresh entity ' + this.entityId);
+        const self = this;
+        if (!this.entityId) return;
+        syncEntity(this.entityId, function (card) {
+            if (!card) return;
+            self.state = card.state;
+            ensureStore().statesById[self.entityId] = card.state;
+            self._rebuildActions();
+        }, function () { /* offline: keep last known */ });
     },
 
     _rebuildActions() {
@@ -82,15 +78,11 @@ export default {
 
         if (this.domain === 'light' || this.domain === 'switch') {
             if (st === 'on') {
-                this.actions = [
-                    { id: 'turn_off', name: 'Turn off', state: 'Switch state', iconSrc: ICON_POWER, color: actionColorBlue() }
-                ];
+                this.actions = [{ id: 'turn_off', name: 'Turn off', state: 'Switch state', iconSrc: ICON_POWER, color: actionColorBlue() }];
                 return;
             }
             if (st === 'off') {
-                this.actions = [
-                    { id: 'turn_on', name: 'Turn on', state: 'Switch state', iconSrc: ICON_POWER, color: actionColorGreen() }
-                ];
+                this.actions = [{ id: 'turn_on', name: 'Turn on', state: 'Switch state', iconSrc: ICON_POWER, color: actionColorGreen() }];
                 return;
             }
             this.actions = [
@@ -102,15 +94,11 @@ export default {
 
         if (this.domain === 'lock') {
             if (st === 'locked') {
-                this.actions = [
-                    { id: 'unlock', name: 'Unlock', state: 'Change state', iconSrc: ICON_LOCK, color: actionColorGreen() }
-                ];
+                this.actions = [{ id: 'unlock', name: 'Unlock', state: 'Change state', iconSrc: ICON_LOCK, color: actionColorGreen() }];
                 return;
             }
             if (st === 'unlocked') {
-                this.actions = [
-                    { id: 'lock', name: 'Lock', state: 'Change state', iconSrc: ICON_LOCK, color: actionColorRed() }
-                ];
+                this.actions = [{ id: 'lock', name: 'Lock', state: 'Change state', iconSrc: ICON_LOCK, color: actionColorRed() }];
                 return;
             }
             this.actions = [
@@ -120,52 +108,65 @@ export default {
             return;
         }
 
-        this.actions = [
-            { id: 'toggle', name: 'Toggle', state: 'Call service', iconSrc: ICON_POWER, color: actionColorGray() }
-        ];
+        this.actions = [{ id: 'toggle', name: 'Toggle', state: 'Call service', iconSrc: ICON_POWER, color: actionColorGray() }];
     },
 
     onAction(action) {
         if (this.busy) return;
         this.busy = true;
+        this.statusText = '';
 
-        const id = action && action.id ? String(action.id) : '';
         const self = this;
+        const service = action && action.id ? String(action.id) : '';
+        const prevState = this.state;
 
-        // optimistic next state
+        // 1) optimistic local + store update (so the list reflects it immediately)
         let nextState = this.state;
-
         if (this.domain === 'light' || this.domain === 'switch') {
-            if (id === 'turn_on') nextState = 'on';
-            if (id === 'turn_off') nextState = 'off';
+            if (service === 'turn_on') nextState = 'on';
+            if (service === 'turn_off') nextState = 'off';
+            if (service === 'toggle') nextState = (String(this.state) === 'on') ? 'off' : 'on';
         } else if (this.domain === 'lock') {
-            if (id === 'lock') nextState = 'locked';
-            if (id === 'unlock') nextState = 'unlocked';
-        } else if (id === 'toggle') {
-            nextState = (String(this.state) === 'on') ? 'off' : 'on';
+            if (service === 'lock') nextState = 'locked';
+            if (service === 'unlock') nextState = 'unlocked';
         }
+        this._setState(nextState);
 
-        // 1) обновляем локально
-        this.state = nextState;
+        // 2) call HA via the companion; confirm or roll back
+        callAction(
+            { domain: this.domain, service: service, data: { entity_id: this.entityId } },
+            function () {
+                syncEntity(self.entityId, function (card) {
+                    if (card) self._setState(card.state);
+                    self._finish();
+                }, function () { self._finish(); });
+            },
+            function (reason) {
+                self._setState(prevState);            // roll back optimistic
+                self.statusText = 'Action failed';
+                self._finish();
+            }
+        );
+    },
 
-        // 2) обновляем STORE (чтобы main экран тоже знал)
+    _setState(next) {
+        this.state = next;
         const store = ensureStore();
-        store.statesById[this.entityId] = nextState;
-
-        // 3) обновляем NAV cache
+        store.statesById[this.entityId] = next;
         store.navEntity = {
             entityId: this.entityId,
             name: this.name,
-            state: nextState,
-            iconSrc: this.iconSrc
+            state: next,
+            iconSrc: this.iconSrc,
+            domain: this.domain
         };
+    },
 
-        // 4) deferred rebuild (Lite-safe)
+    _finish() {
+        const self = this;
         setTimeout(function () {
             self._rebuildActions();
-            setTimeout(function () {
-                self.busy = false;
-            }, 220);
+            setTimeout(function () { self.busy = false; }, 220);
         }, 0);
     }
 };

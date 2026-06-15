@@ -19,5 +19,12 @@
 **/.test/
 **/.appanalyzer/
 
+# Signing material — secrets, never commit (keystores, certs, profiles)
+**/*.p12
+**/*.p7b
+**/*.cer
+**/*.keystore
+**/*.jks
+
 # OS
 .DS_Store

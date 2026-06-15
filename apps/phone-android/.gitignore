@@ -1,0 +1,16 @@
+# Android / Gradle
+.gradle/
+build/
+local.properties
+*.iml
+.idea/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Huawei AppGallery Connect — secret, never commit
+agconnect-services.json
+
+# Signing
+*.keystore
+*.jks

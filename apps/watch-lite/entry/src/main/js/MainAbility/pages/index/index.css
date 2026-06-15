@@ -8,6 +8,21 @@
   height: 100%;
 }
 
+.statusItem {
+  width: 100%;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.statusText {
+  color: #9AA0A6;
+  font-size: 22px;
+  text-align: center;
+}
+
 .titleItem {
   width: 100%;
   height: 160px;

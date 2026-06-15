@@ -111,6 +111,12 @@ struct Index {
     await this.store.sync();
   }
 
+  private statusText(): string {
+    if (this.store.isSyncing) return 'Loading…';
+    if (this.store.lastError.length > 0) return 'Offline — open the phone app';
+    return 'No entities';
+  }
+
   build() {
     Stack() {
       Refresh({ refreshing: this.store.isSyncing }) {
@@ -118,6 +124,20 @@ struct Index {
           scroller: this.scroller,
           header: this.headerContent()
         }) {
+          if (this.store.cards.length === 0) {
+            ArcListItem() {
+              Row() {
+                Text(this.statusText())
+                  .fontSize(18)
+                  .fontColor(0xFF9AA0A6)
+                  .textAlign(TextAlign.Center);
+              }
+              .width('100%')
+              .justifyContent(FlexAlign.Center)
+              .padding(20);
+            }
+          }
+
           ForEach(this.store.cards, (entity: EntityCard) => {
             ArcListItem() {
               Row() {

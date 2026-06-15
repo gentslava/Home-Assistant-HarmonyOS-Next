@@ -1,20 +1,6 @@
 {
   "app": {
-    "signingConfigs": [
-      {
-        "name": "default",
-        "type": "HarmonyOS",
-        "material": {
-          "storeFile": "C:/Users/gents/keystore.p12",
-          "storePassword": "***REMOVED-KEYSTORE-SECRET***",
-          "keyAlias": "gentslava",
-          "keyPassword": "***REMOVED-KEYSTORE-SECRET***",
-          "signAlg": "SHA256withECDSA",
-          "profile": "C:/Users/gents/Watch GT6Debug.p7b",
-          "certpath": "C:/Users/gents/Debug.cer"
-        }
-      }
-    ],
+    "signingConfigs": [],
     "products": [
       {
         "name": "default",

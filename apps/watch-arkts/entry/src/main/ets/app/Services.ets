@@ -29,8 +29,9 @@ export class Services {
   private static async tryInitRealRepo(ctx: common.UIAbilityContext, timeoutMs: number): Promise<HomeAssistantRepository> {
     const p2p: WearEngineP2pClient = new WearEngineP2pClient(ctx);
 
-    // ВАЖНО: тут должны быть ваши реальные значения (bundleName/fingerprint)
-    // p2p.setRemoteApp('com.yourcompany.ha.bridge', 'YOUR_FINGERPRINT');
+    // Companion (Android) bundle + signing fingerprint. Fill the fingerprint from AppGallery Connect.
+    // Until it's real, hasConnectedPeer()/init() fail and Services falls back to Mock (by design).
+    p2p.setRemoteApp('ru.gentslava.homeassistant.companion', 'AE3A8E87933A4B3AC5BEE17C694F0A0B5FA7A515AB2261D4DA8B1F619A664FA1');
 
     await p2p.init();
 
