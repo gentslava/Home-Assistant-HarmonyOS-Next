@@ -39,7 +39,7 @@
       },
       {
         "name": "wearEngineRemoteAppNameList",
-        "value": "com.yourcompany.ha.bridge"
+        "value": "ru.gentslava.homeassistant.companion"
       }
     ]
   }

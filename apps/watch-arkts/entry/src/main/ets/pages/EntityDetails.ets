@@ -2,7 +2,6 @@ import router from '@ohos.router';
 import { AppStorageV2 } from '@ohos.arkui.StateManagement';
 import {
   ArcList, ArcListItem,
-  ArcListAttribute,
   ComponentContent, LengthMetrics
 } from '@kit.ArkUI';
 
@@ -59,9 +58,16 @@ struct EntityDetails {
     return entity ? entity.state : '-';
   }
 
-  private primaryLabel(): string | Resource {
+  private hasPrimary(): boolean {
     const entity: EntityCard | undefined = this.getCard();
-    return entity ? $r(entity.primary.label) : '-';
+    return !!entity && !!entity.primary;
+  }
+
+  // Render the label as plain text — the companion sends localized strings (e.g. "Open",
+  // "Activate"), not resource ids, so $r() would not resolve them.
+  private primaryLabel(): string {
+    const entity: EntityCard | undefined = this.getCard();
+    return entity && entity.primary ? entity.primary.label : '-';
   }
 
   private secondaryActions(): EntityAction[] {
@@ -71,8 +77,9 @@ struct EntityDetails {
 
   private runPrimary(): void {
     const entity: EntityCard | undefined = this.getCard();
-    if (!entity) return;
-    this.store.runAction(entity.primary);
+    const action: EntityAction | undefined = entity ? entity.primary : undefined;
+    if (!action) return;
+    this.store.runAction(action);
   }
 
   private runSecondary(a: EntityAction): void {
@@ -108,10 +115,10 @@ struct EntityDetails {
             .alignItems(VerticalAlign.Center);
           };
 
-          // Primary
+          // Primary — omitted for read-only cards (e.g. sensor)
           ArcListItem() {
-            if (!this.getCard()) {
-              // empty
+            if (!this.hasPrimary()) {
+              // read-only: no primary tile
             } else {
               Row() {
                 SystemTile({

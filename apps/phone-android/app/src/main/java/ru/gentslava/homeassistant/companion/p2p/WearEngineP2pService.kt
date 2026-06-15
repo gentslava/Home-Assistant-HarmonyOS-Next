@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.gentslava.homeassistant.companion.bridge.HaBridge
 import java.nio.charset.StandardCharsets
@@ -39,7 +40,20 @@ class WearEngineP2pService(
         setPeerFingerPrint(PEER_FINGERPRINT)
     }
 
+    // Written from HMS callbacks, read from send coroutines on Dispatchers.Default — needs a
+    // memory barrier so sendRaw never reads a stale null after the device is found.
+    @Volatile
     private var device: Device? = null
+
+    @Volatile
+    private var registered = false
+
+    @Volatile
+    private var running = false
+
+    // Backoff for the reconnect loop so a watch that's away doesn't cause 5s CPU wakeups forever.
+    @Volatile
+    private var retryDelayMs = RETRY_MIN_MS
 
     private val receiver = Receiver { message: Message ->
         if (message.type != Message.MESSAGE_TYPE_DATA) return@Receiver
@@ -50,13 +64,15 @@ class WearEngineP2pService(
         }
     }
 
-    /** Request permission, find the connected watch, and start receiving. */
+    /** Request permission, then keep a receiver registered on the connected watch (idempotent). */
     fun start() {
+        if (running) return
+        running = true
         Log.i(TAG, "start: requesting Wear Engine permission")
         authClient.requestPermission(object : AuthCallback {
             override fun onOk(permissions: Array<out Permission>) {
                 Log.i(TAG, "permission granted: ${permissions.joinToString { it.name }}")
-                findDeviceAndRegister()
+                ensureRegistered()
             }
             override fun onCancel() { Log.e(TAG, "Wear Engine permission cancelled") }
         }, Permission.DEVICE_MANAGER)
@@ -65,26 +81,60 @@ class WearEngineP2pService(
     }
 
     fun stop() {
+        running = false
+        registered = false
+        device = null
         p2pClient.unregisterReceiver(receiver)
             .addOnFailureListener { logErr("unregisterReceiver", it) }
         scope.cancel()
     }
 
-    private fun findDeviceAndRegister() {
+    /**
+     * Resolve the connected watch and (re)register the receiver. Re-runnable: handles the watch
+     * connecting after start, dropping, or reconnecting on a new [Device]. Retries with a fixed
+     * backoff while no connected watch is found or registration fails.
+     */
+    private fun ensureRegistered() {
+        if (!running) return
         deviceClient.getBondedDevices()
             .addOnSuccessListener { devices ->
-                Log.i(TAG, "bonded devices: ${devices.size} [${devices.joinToString { "${it.name}:conn=${it.isConnected}" }}]")
-                device = devices.firstOrNull { it.isConnected }
-                val d = device
-                if (d == null) {
-                    Log.w(TAG, "no connected watch")
+                val connected = devices.firstOrNull { it.isConnected }
+                if (connected == null) {
+                    Log.w(TAG, "no connected watch; retry in ${retryDelayMs}ms")
+                    device = null
+                    registered = false
+                    scheduleRetry()
                     return@addOnSuccessListener
                 }
-                p2pClient.registerReceiver(d, receiver)
-                    .addOnSuccessListener { Log.i(TAG, "P2P receiver registered") }
-                    .addOnFailureListener { logErr("registerReceiver", it) }
+                if (connected != device || !registered) {
+                    device = connected
+                    p2pClient.registerReceiver(connected, receiver)
+                        .addOnSuccessListener {
+                            registered = true
+                            retryDelayMs = RETRY_MIN_MS // connected — reset backoff
+                            Log.i(TAG, "P2P receiver registered on ${connected.name}")
+                        }
+                        .addOnFailureListener {
+                            registered = false
+                            logErr("registerReceiver", it)
+                            scheduleRetry()
+                        }
+                }
             }
-            .addOnFailureListener { logErr("getBondedDevices", it) }
+            .addOnFailureListener {
+                logErr("getBondedDevices", it)
+                scheduleRetry()
+            }
+    }
+
+    private fun scheduleRetry() {
+        if (!running) return
+        val d = retryDelayMs
+        retryDelayMs = (retryDelayMs * 2).coerceAtMost(RETRY_MAX_MS) // exponential backoff
+        scope.launch {
+            delay(d)
+            ensureRegistered()
+        }
     }
 
     private fun sendRaw(json: String) {
@@ -108,6 +158,8 @@ class WearEngineP2pService(
     private companion object {
         const val TAG = "WearEngineP2p"
         const val SEND_SUCCESS = 207
+        const val RETRY_MIN_MS = 5_000L  // first reconnect attempt delay
+        const val RETRY_MAX_MS = 60_000L // backoff ceiling — at most one wakeup per minute when away
 
         // The watch app this companion pairs with. bundleName is fixed; fingerprint must match the
         // watch app's signing cert — fill it in (see README, Phase 1e).

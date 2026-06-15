@@ -13,6 +13,10 @@ export class HomeAssistantStore {
       return;
     }
 
+    // If we fell back to Mock at startup, try to (re)connect the real P2P repo now so the watch
+    // doesn't stay on fake data once the phone becomes reachable.
+    await Services.tryUpgradeToReal();
+
     try {
       this.isSyncing = true;
       this.lastError = '';
@@ -56,6 +60,8 @@ export class HomeAssistantStore {
       }
 
       this.cards = next;
+    } catch (e) {
+      this.lastError = `${e}`;
     } finally {
       this.isSyncing = false;
     }
@@ -70,6 +76,10 @@ export class HomeAssistantStore {
     try {
       this.lastError = '';
       await Services.repo.callAction(action);
+      // Reflect the new state in the UI: Mock updates in place, real P2P returns the
+      // authoritative card. Without this the details screen looks unresponsive after a tap.
+      const entityId: string = action.data['entity_id'] ? action.data['entity_id'] : '';
+      if (entityId.length > 0) await this.refreshEntity(entityId);
     } catch (e) {
       this.lastError = `${e}`;
     }

@@ -79,8 +79,8 @@ docs/p2p-protocol.md                    extend: handshake/config, connection err
 
 - **Always:** keep the mock path working as an offline/dev fallback; bump `v` + update both watch
   apps when changing [p2p-protocol.md](../p2p-protocol.md); keep watch-lite ES5.1-clean.
-- **Ask first:** adding domains beyond light/switch/lock; switching to HA WebSocket; adding a
-  production dependency to a watch app (they are dependency-free today).
+- **Ask first:** adding domains beyond the current set (light/switch/lock/cover/scene/sensor);
+  switching to HA WebSocket; adding a production dependency to a watch app (dependency-free today).
 - **Never:** commit HA tokens / `client_id` / signing fingerprints; hardcode a user's HA URL.
 
 ## Success Criteria

@@ -63,7 +63,7 @@ Architecture map: [../../docs/architecture.md](../../docs/architecture.md). Deci
 ## Gotchas
 
 - **Emulator always uses Mock.** No paired phone ⇒ `hasConnectedPeer()` false ⇒ `MockHomeAssistantRepository`. By design; keep Mock working.
-- **`setRemoteApp(bundleName, fingerprint)` is commented out** in `entry/src/main/ets/app/Services.ets` — real P2P won't connect until the companion's bundleName + fingerprint are filled in.
-- **`module.json5` metadata are placeholders:** `client_id`, `wearEngineRemoteAppNameList`.
+- **`setRemoteApp(bundleName, fingerprint)` is configured** in `entry/src/main/ets/app/Services.ets` with the real companion bundle + debug-cert fingerprint. Real P2P additionally needs Wear Engine approved in AGC.
+- **`module.json5`:** `wearEngineRemoteAppNameList` is the real companion bundle; `client_id` is still a placeholder (`PUT_YOUR_CLIENT_ID_HERE`) — fill it from this watch app's own AGC registration.
 - **`Services.initWithFallback` is fire-and-forget** (not awaited) — UI never blocks on P2P.
 - **P2P correlates by `id`, 8s timeout**; replies may arrive out of order. Protocol change = bump `v` + update [../../docs/p2p-protocol.md](../../docs/p2p-protocol.md).

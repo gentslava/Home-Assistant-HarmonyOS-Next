@@ -9,7 +9,7 @@ Different stack from the watches (Kotlin, not ArkTS/JS). Open `apps/phone-androi
 | | |
 |---|---|
 | Language / UI | Kotlin, Jetpack Compose (Material3) |
-| Build | Gradle (version catalog `gradle/libs.versions.toml`), AGP 8.7, JDK 17 |
+| Build | Gradle (version catalog `gradle/libs.versions.toml`), AGP 8.13.2, JDK 17 |
 | SDK | compileSdk 35, minSdk 26, targetSdk 35 |
 | App id | `ru.gentslava.homeassistant.companion` (companion). The watch peer is `ru.gentslava.homeassistant` |
 | HA | OkHttp + kotlinx-serialization (`Bearer` token) |

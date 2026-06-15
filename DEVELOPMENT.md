@@ -42,8 +42,9 @@ The human owns decisions; agents own execution. Stop and get a human decision be
 
 - Reversing or adding an **ADR** (architecture, transport, protocol).
 - A **breaking P2P protocol change** (`v` bump) — it commits the future companion repo to a contract.
-- Filling in real secrets/identity: `setRemoteApp(...)` / `PEER_FINGERPRINT` / `client_id` /
-  `supportLists` / `agconnect-services.json` (today intentional placeholders).
+- Filling in real secrets/identity: `setRemoteApp(...)` / `PEER_FINGERPRINT` / `supportLists` are
+  filled (real companion bundle + debug-cert fingerprint); still placeholders: `module.json5`'s
+  `client_id` and `agconnect-services.json` (git-ignored, local-only).
 - Adding a **production dependency** to a watch app (they are intentionally dependency-free).
 - Anything where the spec is ambiguous — the author prefers an extra question over a wrong inference.
 

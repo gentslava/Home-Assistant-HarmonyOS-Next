@@ -13,7 +13,7 @@ sharing one design and one wire contract — see [docs/platform-constraints.md](
 |------|------|--------|-------|
 | [`apps/watch-arkts/`](apps/watch-arkts/) | Full-wearable watch app | **Watch 4/5/Ultimate** | ArkTS + ArkUI (Stage), `ArcList` |
 | [`apps/watch-lite/`](apps/watch-lite/) | Lite-wearable watch app | **Watch GT 4/5/6** | JS (FA), HML/CSS, JerryScript (ES5.1) |
-| [`apps/phone-android/`](apps/phone-android/) | Phone companion (P2P ↔ HA REST) | Android | Kotlin + Compose — *not written yet* |
+| [`apps/phone-android/`](apps/phone-android/) | Phone companion (P2P ↔ HA REST) | Android | Kotlin + Compose |
 
 The two watch apps are **mirror architectures in different runtimes** — they share the
 [P2P protocol](docs/p2p-protocol.md), the domain model, and the layering, but **no code**

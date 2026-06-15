@@ -9,7 +9,7 @@ function ensureStore() {
 
     // defaults
     const s = st.settings;
-    if (s.debugMode === undefined) s.debugMode = true;     // like your "Mock data on emulator"
+    if (s.debugMode === undefined) s.debugMode = false;    // off by default: show honest "Offline", not mock data
     if (s.connectionMode === undefined) s.connectionMode = 'local'; // local/cloud (future)
     return st;
 }

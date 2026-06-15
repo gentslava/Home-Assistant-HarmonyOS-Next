@@ -28,7 +28,8 @@ sides.
   mostly a companion + UI-mapping change.
 - Two repos must evolve in lockstep on protocol changes — bump `v` and update both sides together.
 - Real-device P2P requires the companion's `bundleName` + signing `fingerprint` via
-  `WearEngineP2pClient.setRemoteApp(...)`; these are **currently commented out** in `Services.ets`.
+  `WearEngineP2pClient.setRemoteApp(...)`; these are **configured** in `Services.ets` (real
+  companion bundle + debug-cert fingerprint). It additionally needs Wear Engine approved in AGC.
 - Hard dependency on Huawei Wear Engine + a paired Huawei phone; no standalone watch operation.
 
 ## Alternatives considered

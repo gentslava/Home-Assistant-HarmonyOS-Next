@@ -21,7 +21,7 @@ incompatible developer platforms, so there are two watch apps sharing one design
 contract ([docs/platform-constraints.md](docs/platform-constraints.md)).
 
 Maturity: real-HA-integration in progress ([docs/specs/01-real-ha-integration.md](docs/specs/01-real-ha-integration.md)).
-Domains: `light`, `switch`, `lock`. Localization: EN + RU.
+Domains: `light`, `switch`, `lock`, `cover`, `scene`, `sensor` (sensor read-only). Localization: EN + RU.
 
 ## The three apps — read the right rules
 

@@ -32,8 +32,9 @@ Claude-specific guidance.
   Mock run + Code Linter; watch-lite = builds/installs on a real GT; companion = `./gradlew test`.
   State the evidence; if you couldn't run a check, say so instead of asserting it passed.
 - **Scope discipline.** Touch only what the task needs, and don't carry one app's conventions into
-  another. Don't remove deliberate placeholders (`setRemoteApp`, `PEER_FINGERPRINT`, `module.json5`
-  metadata) — see the per-app gotchas.
+  another. `setRemoteApp` / `PEER_FINGERPRINT` are now filled with the real companion bundle +
+  debug-cert fingerprint; the remaining deliberate placeholder is `module.json5`'s `client_id`
+  (`PUT_YOUR_CLIENT_ID_HERE`) — don't remove it. See the per-app gotchas.
 - **Surface assumptions and ask** when requirements are ambiguous — the repo author prefers an
   extra question over a wrong inference.
 
