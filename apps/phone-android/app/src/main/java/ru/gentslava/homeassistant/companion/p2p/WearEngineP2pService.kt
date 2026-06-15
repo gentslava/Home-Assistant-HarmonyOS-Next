@@ -54,7 +54,7 @@ class WearEngineP2pService(
     fun start() {
         authClient.requestPermission(object : AuthCallback {
             override fun onOk(permissions: Array<out Permission>) = findDeviceAndRegister()
-            override fun onCancel() = Log.e(TAG, "Wear Engine permission cancelled")
+            override fun onCancel() { Log.e(TAG, "Wear Engine permission cancelled") }
         }, Permission.DEVICE_MANAGER)
     }
 

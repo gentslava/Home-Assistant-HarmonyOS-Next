@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.2"
+agp = "8.13.2"
 kotlin = "2.0.21"
 coreKtx = "1.13.1"
 lifecycle = "2.8.7"
@@ -9,7 +9,7 @@ okhttp = "4.12.0"
 serialization = "1.7.3"
 securityCrypto = "1.1.0-alpha06"
 # Huawei Wear Engine — used in Phase 1e (needs AppGallery Connect setup; see README)
-wearengine = "5.0.4.300"
+wearengine = "5.0.2.306"
 agconnect = "1.9.1.301"
 junit = "4.13.2"
 

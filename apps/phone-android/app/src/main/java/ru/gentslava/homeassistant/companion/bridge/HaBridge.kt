@@ -1,5 +1,6 @@
 package ru.gentslava.homeassistant.companion.bridge
 
+import kotlinx.serialization.encodeToString
 import ru.gentslava.homeassistant.companion.ha.HaClient
 import ru.gentslava.homeassistant.companion.p2p.Ack
 import ru.gentslava.homeassistant.companion.p2p.CallServiceRequest
