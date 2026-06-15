@@ -52,10 +52,16 @@ class WearEngineP2pService(
 
     /** Request permission, find the connected watch, and start receiving. */
     fun start() {
+        Log.i(TAG, "start: requesting Wear Engine permission")
         authClient.requestPermission(object : AuthCallback {
-            override fun onOk(permissions: Array<out Permission>) = findDeviceAndRegister()
+            override fun onOk(permissions: Array<out Permission>) {
+                Log.i(TAG, "permission granted: ${permissions.joinToString { it.name }}")
+                findDeviceAndRegister()
+            }
             override fun onCancel() { Log.e(TAG, "Wear Engine permission cancelled") }
         }, Permission.DEVICE_MANAGER)
+            .addOnSuccessListener { Log.i(TAG, "requestPermission task accepted") }
+            .addOnFailureListener { logErr("requestPermission", it) }
     }
 
     fun stop() {
@@ -67,6 +73,7 @@ class WearEngineP2pService(
     private fun findDeviceAndRegister() {
         deviceClient.getBondedDevices()
             .addOnSuccessListener { devices ->
+                Log.i(TAG, "bonded devices: ${devices.size} [${devices.joinToString { "${it.name}:conn=${it.isConnected}" }}]")
                 device = devices.firstOrNull { it.isConnected }
                 val d = device
                 if (d == null) {
